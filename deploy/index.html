@@ -1,0 +1,49 @@
+<!-- Credit goes to: https://code.tutsplus.com/tutorials/create-a-contact-form-in-php--cms-32314 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weltladen Bonn Corona Shopper</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  <div class="form">
+    <h1>Weltladen Bonn Corona Shopper</h1>
+    <form action="send-mail.php" method="post">
+      <div class="elem-group">
+        <label for="name">Wie heißt du?</label>
+        <input type="text" id="name" name="visitor_name" placeholder="Max Mustermann" pattern=[A-Z\sa-z]{3,40} required>
+      </div>
+      <div class="elem-group">
+        <label for="email">Deine E-Mail-Adresse</label>
+        <input type="email" id="email" name="visitor_email" placeholder="max.mustermann@email.com" required>
+      </div>
+      <div class="elem-group">
+        <label for="address">Lieferadresse: Wo soll die Bestellung abgegeben werden?</label>
+        <input type="text" id="address" name="address" required placeholder="Musterstraße 1, 53111 Bonn" pattern=[A-Za-z0-9.,\-\s]{5,100}>
+      </div>
+      <div class="elem-group">
+        <label for="product-selection">Wie viel möchtest du von welchem Produkt?</label>
+        <div id="product-selection">
+          <label for="quantity_hase">Schoko-Osterhase</label>
+          <input type="number" id="quantity_hase" name="quantity_hase" min="0" max="1000" value=0>
+          <label for="quantity_naschhase">Zotter-Tafel "Naschhase"</label>
+          <input type="number" id="quantity_naschhase" name="quantity_naschhase" min="0" max="1000" value=0>
+        </div>
+      </div>
+      <div class="elem-group">
+        <label for="message">Möchtest du uns etwas mitteilen?</label>
+        <textarea id="message" name="visitor_message" placeholder="Hier kannst du z.B. weitere Produkte erwähnen, die wir dazu packen sollen."></textarea>
+      </div>
+      <button type="submit">Bestellung abschicken</button>
+    </form>
+  </div>
+  <!-- <script src="https://vuejs.org/js/vue.js"></script> (Development version) -->
+  <!-- <script src="https://vuejs.org/js/vue.min.js"></script> (Production version) -->
+  <script src="vue.js"></script>
+</body>
+
+</html>
