@@ -7,10 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weltladen Bonn Corona Shopper</title>
   <link rel="stylesheet" type="text/css" href="style.css">
+  <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"></script>
 </head>
 
 <body>
-  <div class="form">
+  <div class="form" id="form">
     <h1>Weltladen Bonn Corona Shopper</h1>
     <form action="send-mail.php" method="post">
       <div class="elem-group">
@@ -22,17 +24,25 @@
         <input type="email" id="email" name="visitor_email" placeholder="max.mustermann@email.com" required>
       </div>
       <div class="elem-group">
-        <label for="address">Lieferadresse: Wo soll die Bestellung abgegeben werden?</label>
-        <input type="text" id="address" name="address" required placeholder="Musterstraße 1, 53111 Bonn" pattern=[A-Za-z0-9.,\-\s]{5,100}>
-      </div>
-      <div class="elem-group">
-        <label for="product-selection">Wie viel möchtest du von welchem Produkt?</label>
-        <div id="product-selection">
-          <label for="quantity_hase">Schoko-Osterhase</label>
-          <input type="number" id="quantity_hase" name="quantity_hase" min="0" max="1000" value=0>
-          <label for="quantity_naschhase">Zotter-Tafel "Naschhase"</label>
-          <input type="number" id="quantity_naschhase" name="quantity_naschhase" min="0" max="1000" value=0>
-        </div>
+        <label for="product-selection">Welche Produkte möchtest du?</label>
+        <table id="product-selection">
+          <tbody>
+            <tr v-for="product in products">
+              <td>
+                <select v-bind:id="'product'+product.id" v-bind:name="'product'+product.id" v-model="product.productId" required>
+                  <option v-for="p in productList" v-bind:value="p.id">{{ p.name }}</option>
+                </select>
+              </td>
+              <td class="quant-col">
+                <input type="number" v-bind:id="'quantity'+product.id" v-bind:name="'quantity'+product.id" min="0" max="1000" v-model="product.quantity">
+              </td>
+              <td class="quant-col">
+                <button type="button" class="square" v-on:click="removeProduct(product.id)"><ion-icon name="trash-outline"></ion-icon></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
       </div>
       <div class="elem-group">
         <label for="message">Möchtest du uns etwas mitteilen?</label>
@@ -44,6 +54,54 @@
   <!-- <script src="https://vuejs.org/js/vue.js"></script> (Development version) -->
   <!-- <script src="https://vuejs.org/js/vue.min.js"></script> (Production version) -->
   <script src="vue.js"></script>
+  <!-- <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script> -->
+  <!-- <script src="ionicons.js"></script> -->
+  <script>
+    var app = new Vue({
+      el: '#form',
+      data: {
+        productList: [{
+          id: 'a',
+          name: 'Schoko-Osterhase'
+        }, {
+          id: 'b',
+          name: 'Zotter-Tafel "Naschhasi"'
+        }],
+        products: [{
+          id: 1,
+          productId: 'a',
+          quantity: 0
+        }]
+      },
+      methods: {
+        addProduct: function() {
+          let currId = 0;
+          if (this.products.length > 0) {
+            currId = this.products[this.products.length - 1].id;
+          }
+          this.products.push({
+            id: currId + 1,
+            productId: 'a',
+            quantity: 0
+          })
+        },
+        removeProduct: function(id) {
+          let now = this.products;
+          console.log(now);
+          this.products.splice(id - 1, 1);
+          // same behavior as:
+          // Vue.delete(this.products, id - 1);
+          /* reassign IDs as it is necessary when product was not removed from end */
+          let i = 1;
+          for (let product of this.products) {
+            product.id = i;
+            i += 1;
+          }
+          console.log(this.products);
+        }
+      }
+    });
+  </script>
 </body>
 
 </html>
