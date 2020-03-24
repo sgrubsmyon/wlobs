@@ -9,9 +9,17 @@ div.elem-group {
 }
 
 #product-selection {
-  margin-top: 40px;
+  margin-top: 20px;
   margin-bottom: 20px;
   width: 100%;
+}
+
+#product-selection>tbody>tr>th {
+  text-align: left;
+}
+
+.add-prod-button {
+  margin-top: 20px;
 }
 
 

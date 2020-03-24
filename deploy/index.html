@@ -25,8 +25,13 @@
       </div>
       <div class="elem-group">
         <label for="product-selection">Welche Produkte möchtest du?</label>
+        <button class="add-prod-button" type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
         <table id="product-selection">
           <tbody>
+            <tr>
+              <th>Produktname</th>
+              <th>Stückzahl</th>
+            </tr>
             <tr v-for="product in products">
               <td>
                 <select v-bind:id="'product'+product.id" v-bind:name="'product'+product.id" v-model="product.productId" required>
@@ -42,7 +47,6 @@
             </tr>
           </tbody>
         </table>
-        <button type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
       </div>
       <div class="elem-group">
         <label for="message">Möchtest du uns etwas mitteilen?</label>
@@ -62,15 +66,18 @@
       data: {
         productList: [{
           id: 'a',
-          name: 'Schoko-Osterhase'
+          name: 'Schoko-Osterhase',
+          price: "3.50"
         }, {
           id: 'b',
-          name: 'Zotter-Tafel "Naschhasi"'
+          name: 'Zotter-Tafel "Naschhasi"',
+          price: "3.50"
         }],
         products: [{
           id: 1,
           productId: 'a',
-          quantity: 0
+          quantity: 0,
+          price: "0.00"
         }]
       },
       methods: {
