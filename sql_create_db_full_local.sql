@@ -11,6 +11,7 @@ CREATE TABLE artikel (
     artikel_nr VARCHAR(30) NOT NULL,
     artikel_name VARCHAR(180) NOT NULL,
     vk_preis DECIMAL(13,2) DEFAULT NULL,
+    pfand DECIMAL(13,2) DEFAULT NULL,
     mwst_satz DECIMAL(6,5) NOT NULL,
     PRIMARY KEY (lieferant_name, artikel_nr)
 ) DEFAULT CHARSET=utf8;
@@ -31,6 +32,7 @@ CREATE TABLE bestellung_details (
     artikel_name VARCHAR(180) NOT NULL,
     stueckzahl SMALLINT(5) NOT NULL DEFAULT 1,
     ges_preis DECIMAL(13,2) NOT NULL,
+    ges_pfand DECIMAL(13,2) NOT NULL,
     mwst_satz DECIMAL(6,5) NOT NULL,
     PRIMARY KEY (bd_id)
 ) DEFAULT CHARSET=utf8;
