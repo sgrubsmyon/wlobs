@@ -1,9 +1,14 @@
 USE kasse;
 
 SELECT DISTINCT
-lieferant_name, a.artikel_nr, a.artikel_name,
-(CASE WHEN (toplevel_id = 2 OR toplevel_id = 3) THEN produktgruppen_name ELSE "Kosmetik, Hygiene und Haushalt" END) AS produktgruppe,
-a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz
+  lieferant_name, a.artikel_nr, a.artikel_name,
+  (CASE
+    WHEN (toplevel_id = 2 AND sub_id = 17 AND lieferant_name = "Bantam") THEN "Saatgut"
+    WHEN (toplevel_id = 2 AND sub_id = 17 AND (lieferant_name = "GEPA" OR lieferant_name = "WeltPartner" OR lieferant_name = "Ethiquable")) THEN "Ostern"
+    WHEN (toplevel_id = 2 OR toplevel_id = 3) THEN produktgruppen_name
+    ELSE "Kosmetik, Hygiene und Haushalt"
+  END) AS produktgruppe,
+  a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz
 FROM artikel AS a
 INNER JOIN lieferant USING (lieferant_id)
 INNER JOIN produktgruppe USING (produktgruppen_id)
@@ -31,6 +36,15 @@ WHERE (
         WHERE DATE(bestell_datum) >= '2020-01-01'
       )
     )
+  ) OR (
+    -- Extra Lebensmittel: alle Saisonartikel von Bantam/Bingenheimer im Sortiment (Saatgut)
+    toplevel_id = 2 AND sub_id = 17 AND lieferant_name = "Bantam"
+    AND a.sortiment = TRUE
+  ) OR (
+    -- Extra Lebensmittel: alle Saisonartikel von GEPA, wp, Ethiquable (Ostern)
+    toplevel_id = 2 AND sub_id = 17 AND
+    (lieferant_name = "GEPA" OR lieferant_name = "WeltPartner" OR lieferant_name = "Ethiquable")
+    AND a.sortiment = TRUE
   ) OR (
     -- 4.14 Kosmetik:
     toplevel_id = 4 AND sub_id = 14
