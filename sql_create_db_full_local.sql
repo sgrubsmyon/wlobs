@@ -10,6 +10,7 @@ CREATE TABLE artikel (
     lieferant_name VARCHAR(50) NOT NULL,
     artikel_nr VARCHAR(30) NOT NULL,
     artikel_name VARCHAR(180) NOT NULL,
+    produktgruppen_name VARCHAR(50) NOT NULL,
     vk_preis DECIMAL(13,2) DEFAULT NULL,
     pfand DECIMAL(13,2) DEFAULT NULL,
     mwst_satz DECIMAL(6,5) NOT NULL,
