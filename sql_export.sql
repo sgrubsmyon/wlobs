@@ -1,7 +1,8 @@
 USE kasse;
 
 SELECT
-DISTINCT lieferant_name, a.artikel_nr, a.artikel_name, a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz
+DISTINCT (CASE WHEN (toplevel_id = 2 OR toplevel_id = 3) THEN produktgruppen_name ELSE "Kosmetik, Hygiene und Haushalt" END) AS produktgruppe,
+lieferant_name, a.artikel_nr, a.artikel_name, a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz
 FROM artikel AS a
 INNER JOIN lieferant USING (lieferant_id)
 INNER JOIN produktgruppe USING (produktgruppen_id)
