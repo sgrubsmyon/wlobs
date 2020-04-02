@@ -32,10 +32,10 @@ if ($num>0) {
 
         $artikel_item=array(
             // "description" => html_entity_decode($description),
+            "produktgruppen_name" => $produktgruppen_name,
             "lieferant_name" => $lieferant_name,
             "artikel_nr" => $artikel_nr,
             "artikel_name" => $artikel_name,
-            "produktgruppen_name" => $produktgruppen_name,
             "vk_preis" => $vk_preis,
             "pfand" => $pfand,
             "mwst_satz" => $mwst_satz
