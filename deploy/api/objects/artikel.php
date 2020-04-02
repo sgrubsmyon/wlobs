@@ -9,9 +9,10 @@ class Artikel{
     public $lieferant_name;
     public $artikel_nr;
     public $artikel_name;
+    public $produktgruppen_name;
     public $vk_preis;
-    public $mwst_satz;
     public $pfand;
+    public $mwst_satz;
 
     // constructor with $db as database connection
     public function __construct($db) {
@@ -22,10 +23,9 @@ class Artikel{
     function read() {
         // select all query
         $query = "SELECT
-          lieferant_name, artikel_nr, artikel_name, vk_preis, mwst_satz, pfand
+          lieferant_name, artikel_nr, artikel_name, produktgruppen_name, vk_preis, pfand, mwst_satz
           FROM " . $this->table_name . "
-          ORDER BY
-          (lieferant_name, artikel_nr) DESC";
+          ORDER BY lieferant_name, artikel_nr DESC";
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);

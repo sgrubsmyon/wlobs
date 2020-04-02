@@ -27,18 +27,18 @@ if ($num>0) {
     // fetch() is faster than fetchAll()
     // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-        // extract row
-        // this will make $row['name'] to
-        // just $name only
+        // extract row: this will allow to use the shortcut $name for $row['name']
         extract($row);
 
         $artikel_item=array(
-            "id" => $id,
-            "name" => $name,
-            "description" => html_entity_decode($description),
-            "price" => $price,
-            "category_id" => $category_id,
-            "category_name" => $category_name
+            // "description" => html_entity_decode($description),
+            "lieferant_name" => $lieferant_name,
+            "artikel_nr" => $artikel_nr,
+            "artikel_name" => $artikel_name,
+            "produktgruppen_name" => $produktgruppen_name,
+            "vk_preis" => $vk_preis,
+            "pfand" => $pfand,
+            "mwst_satz" => $mwst_satz
         );
 
         array_push($artikel_arr["records"], $artikel_item);
