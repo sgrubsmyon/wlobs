@@ -3,15 +3,18 @@ USE kasse;
 SELECT DISTINCT
   lieferant_name, a.artikel_nr, a.artikel_name,
   (CASE
-    WHEN (toplevel_id = 2 AND sub_id = 17 AND lieferant_name = "Bantam") THEN "Saatgut"
-    WHEN (toplevel_id = 2 AND sub_id = 17 AND (lieferant_name = "GEPA" OR lieferant_name = "WeltPartner" OR lieferant_name = "Ethiquable")) THEN "Ostern"
-    WHEN (toplevel_id = 2 OR toplevel_id = 3) THEN produktgruppen_name
+    WHEN (p.toplevel_id = 2 AND p.sub_id = 17 AND lieferant_name = "Bantam") THEN "Saatgut"
+    WHEN (p.toplevel_id = 2 AND p.sub_id = 17 AND (lieferant_name = "GEPA" OR lieferant_name = "WeltPartner" OR lieferant_name = "Ethiquable")) THEN "Ostern"
+    WHEN (p.toplevel_id = 3 AND p.sub_id = 2) THEN "Alkoholische Getränke"
+    WHEN (p.toplevel_id = 3 AND p.sub_id > 2) THEN "Alkoholfreie Getränke"
+    WHEN (p.sub_id IS NOT NULL) THEN (SELECT produktgruppen_name FROM produktgruppe WHERE toplevel_id = p.toplevel_id AND sub_id = p.sub_id AND ISNULL(subsub_id))
+    WHEN (p.toplevel_id = 2 OR p.toplevel_id = 3) THEN produktgruppen_name
     ELSE "Kosmetik, Hygiene und Haushalt"
   END) AS produktgruppe,
   a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz
 FROM artikel AS a
 INNER JOIN lieferant USING (lieferant_id)
-INNER JOIN produktgruppe USING (produktgruppen_id)
+INNER JOIN produktgruppe AS p USING (produktgruppen_id)
 INNER JOIN mwst USING (mwst_id)
 LEFT JOIN pfand USING (pfand_id)
 LEFT JOIN artikel AS pfandartikel ON pfand.artikel_id = pfandartikel.artikel_id
@@ -19,7 +22,7 @@ WHERE (
   (
     -- Lebensmittel und Getränke:
       -- first select all articles active and in sortiment:
-    (toplevel_id = 2 OR toplevel_id = 3)
+    (p.toplevel_id = 2 OR p.toplevel_id = 3)
     AND a.sortiment = TRUE AND a.aktiv = TRUE
       -- then restrict to those whose artikel_nr (not artikel_id!) was in any
       -- recent verkauf or bestellung:
@@ -38,20 +41,20 @@ WHERE (
     )
   ) OR (
     -- Extra Lebensmittel: alle Saisonartikel von Bantam/Bingenheimer im Sortiment (Saatgut)
-    toplevel_id = 2 AND sub_id = 17 AND lieferant_name = "Bantam"
+    p.toplevel_id = 2 AND p.sub_id = 17 AND lieferant_name = "Bantam"
     AND a.sortiment = TRUE
   ) OR (
     -- Extra Lebensmittel: alle Saisonartikel von GEPA, wp, Ethiquable (Ostern)
-    toplevel_id = 2 AND sub_id = 17 AND
+    p.toplevel_id = 2 AND p.sub_id = 17 AND
     (lieferant_name = "GEPA" OR lieferant_name = "WeltPartner" OR lieferant_name = "Ethiquable")
     AND a.sortiment = TRUE
   ) OR (
     -- 4.14 Kosmetik:
-    toplevel_id = 4 AND sub_id = 14
+    p.toplevel_id = 4 AND p.sub_id = 14
     AND a.sortiment = TRUE
   ) OR (
     -- 5 Ergänzungsprodukte:
-    toplevel_id = 5
+    p.toplevel_id = 5
     AND a.sortiment = TRUE
   ) OR
   -- Sonstiges Kunsthandwerk:
