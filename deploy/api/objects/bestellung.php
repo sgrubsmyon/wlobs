@@ -29,10 +29,8 @@ class Bestellung {
 
     // prepare query statement
     $stmt = $this->conn->prepare($query);
-
     // execute query
     $stmt->execute();
-
     return $stmt;
   }
 
@@ -44,6 +42,19 @@ class Bestellung {
       return $row['mx'];
     };
     return -1;
+  }
+
+  // retrieve the timestamp when bestellung was created from SQL server
+  function bestell_timestamp($bestell_nr) {
+    $query = "SELECT bestelldatum FROM " . $this->table_name . "
+      WHERE bestell_nr = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $bestell_nr);
+    if ($stmt->execute()) {
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      return $row['bestelldatum'];
+    };
+    return NULL;
   }
 
   // create bestellung
@@ -62,14 +73,14 @@ class Bestellung {
     if (!$stmt->execute()) {
       $this->conn->exec("ROLLBACK"); // things went wrong: go back to previous state
       $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
-      return false;
+      return NULL;
     }
 
     $bestell_nr = $this->max_bestell_nr();
     if ($bestell_nr < 0) {
       $this->conn->exec("ROLLBACK"); // things went wrong: go back to previous state
       $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
-      return false;
+      return NULL;
     }
 
     foreach ($this->details as $item) { // loop over the array of ordered products, sent via POST
@@ -109,12 +120,12 @@ class Bestellung {
       if (!$stmt->execute()) {
         $this->conn->exec("ROLLBACK"); // things went wrong: go back to previous state
         $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
-        return false;
+        return NULL;
       }
     }
     $this->conn->exec("COMMIT"); // things went OK: write changes permanently to DB
     $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
-    return true;
+    return $this->bestell_timestamp($bestell_nr);
   }
 
 }

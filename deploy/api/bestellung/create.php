@@ -27,11 +27,12 @@ if (!empty($data->details)) {
   //$bestellung->created = date('Y-m-d H:i:s');
 
   // create the bestellung
-  if ($bestellung->create()) {
+  $bestelldatum = $bestellung->create();
+  if (!is_null($bestelldatum)) {
     // set response code - 201 created
     http_response_code(201);
     // tell the user
-    echo json_encode(array("message" => "Bestellung was created."));
+    echo json_encode(array("message" => "Bestellung was created.", "datum" => $bestelldatum));
   } else {
     // if unable to create the bestellung, tell the user
     // set response code - 503 service unavailable
