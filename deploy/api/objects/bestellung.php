@@ -36,73 +36,86 @@ class Bestellung {
     return $stmt;
   }
 
-  // function max_bestell_nr() {
-  //   $query = "SELECT MAX(bestell_nr) AS mx FROM " . $this->table_name;
-  //   $stmt = $this->conn->prepare($query);
-  //   if ($stmt->execute()) {
-  //     $row = $stmt->fetch(PDO::FETCH_ASSOC)
-  //     return $row['mx'];
-  //   };
-  //   return -1;
-  // }
+  function max_bestell_nr() {
+    $query = "SELECT MAX(bestell_nr) AS mx FROM " . $this->table_name;
+    $stmt = $this->conn->prepare($query);
+    if ($stmt->execute()) {
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      return $row['mx'];
+    };
+    return -1;
+  }
 
-  // create product
-  function create(){
-    "START TRANSACTION"
-    "LOCK TABLES bestellung WRITE" // make sure no-one else inserts a bestellung
-                                   // so that bestell_nr would be messed up
+  // create bestellung
+  function create() {
+    // make sure no-one else inserts a bestellung
+    // until finished so that bestell_nr is not messed up
+    $this->conn->exec("LOCK TABLES bestellung WRITE");
+    $this->conn->exec("START TRANSACTION");
+
     $query = "INSERT INTO " . $this->table_name . "
-      SET bestelldatum = NOW();"
+      SET bestelldatum = NOW()";
 
     // prepare query
     $stmt = $this->conn->prepare($query);
 
-    if ($stmt->execute()) {
-      $bestell_nr = max_bestell_nr();
-      if ($bestell_nr >= 0) {
+    if (!$stmt->execute()) {
+      $this->conn->exec("ROLLBACK"); // things went wrong: go back to previous state
+      $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
+      return false;
+    }
 
-        // $query = "INSERT INTO " . $this->table_name . "_details
-        //   SET bestell_nr=:bestell_nr, position=:position, stueckzahl=:stueckzahl,
-        //     lieferant_name=:lieferant_name, artikel_nr=:artikel_nr,
-        //     artikel_name=:artikel_name, ges_preis=:ges_preis, ges_pfand=:ges_pfand, mwst_satz=:mwst_satz";
+    $bestell_nr = $this->max_bestell_nr();
+    if ($bestell_nr < 0) {
+      $this->conn->exec("ROLLBACK"); // things went wrong: go back to previous state
+      $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
+      return false;
+    }
 
-        $query = "INSERT INTO " . $this->table_name . "_details
+    foreach ($this->details as $item) { // loop over the array of ordered products, sent via POST
+      // Query if all data would be sent via POST:
+      // $query = "INSERT INTO " . $this->table_name . "_details
+      //   SET bestell_nr=:bestell_nr, position=:position, stueckzahl=:stueckzahl,
+      //     lieferant_name=:lieferant_name, artikel_nr=:artikel_nr,
+      //     artikel_name=:artikel_name, ges_preis=:ges_preis, ges_pfand=:ges_pfand, mwst_satz=:mwst_satz";
+
+      // Query if only required data is sent via POST (position, stueckzahl, lieferant_name, artikel_nr):
+      $query = "INSERT INTO " . $this->table_name . "_details
           (bestell_nr, position, stueckzahl, lieferant_name, artikel_nr,
-           artikel_name, ges_preis, ges_pfand, mwst_satz)
+          artikel_name, ges_preis, ges_pfand, mwst_satz)
           SELECT
-            (SELECT MAX(bestell_nr) FROM bestellung), :position, :stueckzahl,
+          :bestell_nr, :position, :stueckzahl,
             lieferant_name, artikel_nr, artikel_name, :stueckzahl * vk_preis,
             :stueckzahl * pfand, mwst_satz
-          FROM artikel WHERE lieferant_name = :lieferant_name AND artikel_nr = :artikel_nr";
+            FROM artikel WHERE lieferant_name = :lieferant_name AND artikel_nr = :artikel_nr";
 
-        // prepare query
-        $stmt = $this->conn->prepare($query);
+      // prepare query
+      $stmt = $this->conn->prepare($query);
 
-        // sanitize
-        $this->name=htmlspecialchars(strip_tags($this->name));
-        $this->price=htmlspecialchars(strip_tags($this->price));
-        $this->description=htmlspecialchars(strip_tags($this->description));
-        $this->category_id=htmlspecialchars(strip_tags($this->category_id));
-        $this->created=htmlspecialchars(strip_tags($this->created));
+      // sanitize
+      $item->position = htmlspecialchars(strip_tags($item->position));
+      $item->stueckzahl = htmlspecialchars(strip_tags($item->stueckzahl));
+      $item->lieferant_name = htmlspecialchars(strip_tags($item->lieferant_name));
+      $item->artikel_nr = htmlspecialchars(strip_tags($item->artikel_nr));
 
-        // bind values
-        $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":price", $this->price);
-        $stmt->bindParam(":description", $this->description);
-        $stmt->bindParam(":category_id", $this->category_id);
-        $stmt->bindParam(":created", $this->created);
+      // bind values
+      $stmt->bindParam(":bestell_nr", $bestell_nr);
+      $stmt->bindParam(":position", $item->position);
+      $stmt->bindParam(":stueckzahl", $item->stueckzahl);
+      $stmt->bindParam(":lieferant_name", $item->lieferant_name);
+      $stmt->bindParam(":artikel_nr", $item->artikel_nr);
 
-        // execute query
-        if ($stmt->execute()) {
-            "UNLOCK TABLES" // make table available again in any case
-            "COMMIT" // things went OK: write changes permanently to DB
-            return true;
-        }
+      // execute query
+      if (!$stmt->execute()) {
+        $this->conn->exec("ROLLBACK"); // things went wrong: go back to previous state
+        $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
+        return false;
       }
     }
-    "UNLOCK TABLES" // make table available again in any case
-    "ROLLBACK" // things went wrong: go back to previous state
-    return false;
+    $this->conn->exec("COMMIT"); // things went OK: write changes permanently to DB
+    $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
+    return true;
   }
+
 }
 ?>
