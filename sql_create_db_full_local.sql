@@ -22,7 +22,7 @@ CREATE TABLE artikel (
 CREATE TABLE bestellung (
     bestell_nr INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     bestelldatum DATETIME NOT NULL,
-    bestaetigt BOOLEAN NOT NULL DEFAULT FALSE,
+--    bestaetigt BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (bestell_nr)
 );
 
@@ -40,24 +40,25 @@ CREATE TABLE bestellung_details (
     FOREIGN KEY (bestell_nr) REFERENCES bestellung(bestell_nr)
 );
 
-CREATE TABLE bestellung_secret (
-    bestell_nr INTEGER(10) UNSIGNED NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    adresse VARCHAR(100) DEFAULT NULL,
-    tel VARCHAR(30) DEFAULT NULL,
-    hinweise VARCHAR(500) DEFAULT NULL,
-    lieferung BOOLEAN DEFAULT FALSE,
-    secret CHAR(30) NOT NULL,
-    PRIMARY KEY (bestell_nr),
-    FOREIGN KEY (bestell_nr) REFERENCES bestellung(bestell_nr)
-);
+-- CREATE TABLE bestellung_secret (
+--     bestell_nr INTEGER(10) UNSIGNED NOT NULL,
+--     name VARCHAR(50) NOT NULL,
+--     email VARCHAR(100) NOT NULL,
+--     adresse VARCHAR(100) DEFAULT NULL,
+--     tel VARCHAR(30) DEFAULT NULL,
+--     hinweise VARCHAR(500) DEFAULT NULL,
+--     lieferung BOOLEAN DEFAULT FALSE,
+--     secret CHAR(30) NOT NULL,
+--     PRIMARY KEY (bestell_nr),
+--     FOREIGN KEY (bestell_nr) REFERENCES bestellung(bestell_nr)
+-- );
 
 GRANT LOCK TABLES ON m1444db4.* TO 'm1444db4'@'localhost';
 GRANT SELECT ON m1444db4.* TO 'm1444db4'@'localhost';
-GRANT INSERT, UPDATE ON m1444db4.bestellung TO 'm1444db4'@'localhost';
+-- GRANT INSERT, UPDATE ON m1444db4.bestellung TO 'm1444db4'@'localhost';
+GRANT INSERT ON m1444db4.bestellung TO 'm1444db4'@'localhost';
 GRANT INSERT ON m1444db4.bestellung_details TO 'm1444db4'@'localhost';
-GRANT INSERT, DELETE ON m1444db4.bestellung_secret TO 'm1444db4'@'localhost';
+-- GRANT INSERT, DELETE ON m1444db4.bestellung_secret TO 'm1444db4'@'localhost';
 
 LOAD DATA LOCAL INFILE 'artikel.txt' INTO TABLE artikel;
 
