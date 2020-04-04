@@ -1,11 +1,11 @@
-DROP USER IF EXISTS 'm1444db4'@'localhost';
-CREATE USER 'm1444db4'@'localhost' IDENTIFIED BY 'p';
+DROP USER IF EXISTS 'u'@'localhost';
+CREATE USER 'u'@'localhost' IDENTIFIED BY 'p';
 
-DROP DATABASE IF EXISTS m1444db4;
--- CREATE DATABASE m1444db4 CHARACTER SET utf8 COLLATE utf8_general_ci; -- original like in Weltladenkasse
-CREATE DATABASE m1444db4 DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci; -- adopted from https://framagit.org/framasoft/framadate/framadate/-/wikis/Install/Database
+DROP DATABASE IF EXISTS d;
+-- CREATE DATABASE d CHARACTER SET utf8 COLLATE utf8_general_ci; -- original like in Weltladenkasse
+CREATE DATABASE d DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci; -- adopted from https://framagit.org/framasoft/framadate/framadate/-/wikis/Install/Database
 
-USE m1444db4;
+USE d;
 
 CREATE TABLE artikel (
     lieferant_name VARCHAR(50) NOT NULL,
@@ -53,12 +53,12 @@ CREATE TABLE bestellung_details (
 --     FOREIGN KEY (bestell_nr) REFERENCES bestellung(bestell_nr)
 -- );
 
-GRANT LOCK TABLES ON m1444db4.* TO 'm1444db4'@'localhost';
-GRANT SELECT ON m1444db4.* TO 'm1444db4'@'localhost';
--- GRANT INSERT, UPDATE ON m1444db4.bestellung TO 'm1444db4'@'localhost';
-GRANT INSERT ON m1444db4.bestellung TO 'm1444db4'@'localhost';
-GRANT INSERT ON m1444db4.bestellung_details TO 'm1444db4'@'localhost';
--- GRANT INSERT, DELETE ON m1444db4.bestellung_secret TO 'm1444db4'@'localhost';
+GRANT LOCK TABLES ON d.* TO 'u'@'localhost';
+GRANT SELECT ON d.* TO 'u'@'localhost';
+-- GRANT INSERT, UPDATE ON d.bestellung TO 'u'@'localhost';
+GRANT INSERT ON d.bestellung TO 'u'@'localhost';
+GRANT INSERT ON d.bestellung_details TO 'u'@'localhost';
+-- GRANT INSERT, DELETE ON d.bestellung_secret TO 'u'@'localhost';
 
 LOAD DATA LOCAL INFILE 'artikel.txt' INTO TABLE artikel;
 
