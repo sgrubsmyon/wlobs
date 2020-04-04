@@ -13,40 +13,50 @@
 
 <body>
   <div class="form" id="form">
-    <h1 style="font-family: 'Amatic SC'">Weltladen Bonn Bestellformular</h1>
-    <p style="font-family: 'Open Sans Condensed', sans-serif;">Leider können wir aktuell nicht regulär für Sie öffnen, gerne sind wir jedoch auf diese Weise für Sie da. So gehts:
-      <ol style="font-family: 'Open Sans Condensed', sans-serif;">
-        <li>Geben Sie Ihre Kontaktdaten an, wir benötigen sie zur Abwicklung der Bestellung (und nur dafür).</li>
-        <li>Wählen Sie zuerst eine Produktgruppe aus und dann im Feld rechts davon eines der Produkte. Danach können Sie daneben die Stückzahl eingeben, ganz rechts erscheint der Gesamtpreis für dieses Produkt.</li>
-        <li>Über das (+) Pluszeichen fügen Sie Produkte hinzu, über das () Mülltonnensymbol können Sie sie löschen. Es gibt keine Mindestanzahl pro Produkt. Die Anzahl können Sie jederzeit anpassen, klicken Sie anschließend neben dem Gesamtbetrag auf den
-          () Aktualisieren-Button.</li>
-        <li>Wenn Sie etwas bestellen möchten, das Sie nicht in der Produktauswahl finden, können Sie im Freitextfeld unter dem Gesamtpreis hinzufügen.</li>
-        <li>Nach dem Klick auf „Absenden und Bestellen“ erhalten Sie die Übersicht Ihrer Bestellung per E-Mail zugeschickt.</li>
-        <li>Wir melden uns anschließend bei Ihnen, um Ihnen das nächste mögliche Abholdatum zu nennen, außerdem um ggf. offene Fragen zu klären. Falls der Termin nicht passt, finden wir eine passende Alternative. <b>Wichtig: bitte bestätigen Sie den Abholtermin, damit die Ware für Sie gepackt wird.</b></li>
-        <li>Kommen Sie zum vereinbarten Termin zum Laden und holen Sie Ihre Bestellung ab. Bitte halten Sie dabei die empfohlenen Hygieneempfehlungen ein, insbesondere den Abstand.</li>
-        <li>Freuen Sie sich über leckere Produkte aus Fairem Handel. Sie unterstützen damit sowohl die lokalen Strukturen des Fairen Handels als auch die Fairhandelskooperativen und Kleinproduzent*innen weltweit!</li>
-      </ol>
-    </p>
-    <form action="send-mail.php" method="post" style="font-family: 'Open Sans Condensed', sans-serif;">
-      <div>Ihre Kontaktdaten:</div>
-      <div class="elem-group">
+    <h1>Weltladen Bonn Bestellformular</h1>
+    <h2>Leider können wir aktuell nicht regulär für Sie öffnen, gerne sind wir jedoch auf diese Weise für Sie da.</h2>
+    <!-- Collapsible: https://alligator.io/css/collapsible/ -->
+    <div class="wrap-collabsible">
+      <input id="collapsible" class="toggle" type="checkbox">
+      <label for="collapsible" class="lbl-toggle" tabindex="0">So geht's</label>
+      <div class="collapsible-content">
+        <div class="content-inner">
+          <p>
+            <ol>
+              <li>Geben Sie Ihre Kontaktdaten an, wir benötigen sie zur Abwicklung der Bestellung (und nur dafür).</li>
+              <li>Wählen Sie zuerst eine Produktgruppe aus und dann im Feld rechts davon eines der Produkte. Danach können Sie daneben die Stückzahl eingeben, ganz rechts erscheint der Gesamtpreis für dieses Produkt.</li>
+              <li>Über das Pluszeichen (+) fügen Sie Produkte hinzu, über das Mülltonnensymbol <span>(<ion-icon name="trash-outline" style="vertical-align: middle;"></ion-icon>)</span> können Sie sie löschen. Es gibt keine Mindestanzahl pro Produkt. Die Anzahl
+                können Sie jederzeit anpassen, klicken Sie anschließend neben dem Gesamtbetrag auf den () Aktualisieren-Button.</li>
+              <li>Wenn Sie etwas bestellen möchten, das Sie nicht in der Produktauswahl finden, können Sie im Freitextfeld unter dem Gesamtpreis hinzufügen.</li>
+              <li>Nach dem Klick auf „Absenden und Bestellen“ erhalten Sie die Übersicht Ihrer Bestellung per E-Mail zugeschickt.</li>
+              <li>Wir melden uns anschließend bei Ihnen, um Ihnen das nächste mögliche Abholdatum zu nennen, außerdem um ggf. offene Fragen zu klären. Falls der Termin nicht passt, finden wir eine passende Alternative. <b>Wichtig: bitte bestätigen Sie den Abholtermin, damit die Ware für Sie gepackt wird.</b></li>
+              <li>Kommen Sie zum vereinbarten Termin zum Laden und holen Sie Ihre Bestellung ab. Bitte halten Sie dabei die empfohlenen Hygieneempfehlungen ein, insbesondere den Abstand.</li>
+              <li>Freuen Sie sich über leckere Produkte aus Fairem Handel. Sie unterstützen damit sowohl die lokalen Strukturen des Fairen Handels als auch die Fairhandelskooperativen und Kleinproduzent*innen weltweit!</li>
+            </ol>
+          </p>
+        </div>
+      </div>
+    </div>
+    <h2>Ihre Kontaktdaten:</h2>
+    <form action="send-mail.php" method="post">
+      <fieldset class="elem-group">
         <label for="name">Vor- und Nachname*</label>
         <input type="text" id="name" name="visitor_name" placeholder="Max Mustermann" pattern=[A-Z\sa-z]{3,50} required>
-      </div>
-      <div class="elem-group">
-        <label for="phone">Telefonnummer*</label>
-        <input type="phone" id="phone" name="visitor_phone" placeholder="0228/697052" required>
-      </div>
-      <div class="elem-group">
+      </fieldset>
+      <fieldset class="elem-group">
         <label for="email">E-Mail-Adresse*</label>
         <input type="email" id="email" name="visitor_email" placeholder="info@weltladen-bonn.org" required>
-      </div>
-      <div class="elem-group">
+      </fieldset>
+      <fieldset class="elem-group">
+        <label for="phone">Telefonnummer*</label>
+        <input type="phone" id="phone" name="visitor_phone" placeholder="0228/697052" required>
+      </fieldset>
+      <fieldset class="elem-group">
         <label for="address">Adresse</label>
         <input type="address" id="address" name="visitor_address" placeholder="Maxstraße 36, 53111 Bonn" required>
-      </div>
-      <div class="elem-group">
-        <label for="product-selection">Ich möchte hiermit gerne folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</label></br>
+      </fieldset>
+      <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
+      <fieldset class="elem-group">
         <button class="add-prod-button" type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
         <table id="product-selection">
           <tbody>
@@ -59,6 +69,11 @@
                 <select v-bind:id="'product'+product.id" v-bind:name="'product'+product.id" v-model="product.productId" required>
                   <option v-for="p in productList" v-bind:value="p.id">{{ p.name }}</option>
                 </select>
+                <div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
               </td>
               <td class="quant-col">
                 <input type="number" v-bind:id="'quantity'+product.id" v-bind:name="'quantity'+product.id" min="0" max="1000" v-model="product.quantity">
@@ -69,35 +84,39 @@
             </tr>
           </tbody>
         </table>
-      </div>
-      <div class="elem-group">
-        <label for="message">Ich habe Interesse an folgenden weiteren Produkten oder folgende Fragen, bitte senden Sie mir dazu Informationen zu:</label></br>
+      </fieldset>
+      <fieldset class="elem-group">
+        <label for="message">Ich habe Interesse an folgenden weiteren Produkten oder folgende Fragen, bitte senden Sie mir dazu Informationen zu:</label>
         <textarea id="message" name="visitor_message" placeholder="Hier kannst du z.B. weitere Produkte erwähnen, die wir dazu packen sollen."></textarea>
-      </div>
-      <div>
-        <ul>
-          <li>
-            <label>
-              <input type="checkbox" name="Datenschutz" value="Datenschutz_true" required>
-              * Hiermit willige ich ein, dass meine Daten ausschließlich zum Zweck der Abwicklung der hier eingegebenen Anfrage und Bestellung verwendet werden. Ist dieser Zweck erfüllt, werden meine Daten gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten dagegen sprechen. Sind alle Aufbewahrungspflichten abgelaufen, werden die Daten vollständig gelöscht. Eine Verarbeitung zu anderem Zwecke oder Weitergabe an Dritte erfolgt grundsätzlich nicht.
-            </label>
-          </li>
-          <li>
-            <label>
-              <input type="checkbox" name="Hygiene" value="Hygiene_true" required>
-              * Hiermit willige ich ein, mich bei der Übergabe der Bestellung an die derzeitigen Vorgaben und Empfehlungen für den sicheren Kontakt in der Öffentlichkeit zu halten, beispielsweise Vorgaben von Bund, Land und Stadt Bonn sowie Empfehlungen des Robert-Koch-Instituts, um weder mich noch die Mitarbeitenden des Weltladens noch andere Kund*innen zu gefährden.
-            </label>
-          </li>
-          <li>
-            <label>
-              <input type="checkbox" name="Lieferung" value="Lieferung_true">
-              <b>Ich gehöre zu einer Risikogruppe, habe engen Kontakt mit Personen aus Riskogruppen oder befinde mich in Quarantäne, weshalb mir der Weg zum Weltladen unmöglich oder ein zu hohes Risiko ist. Bitte teilen Sie mir mit, ob meine Bestellung an die oben angegebene Anschrift geliefert werden kann. Für die Lieferung entstehen keine Kosten.</b>
-            </label>
-          </li>
-        </ul>
-      </div>
-      * = Pflichtfeld</br>
-      <button type="submit">Bestellung abschicken</button>
+      </fieldset>
+      <fieldset class="elem-group checkboxes">
+        <input type="checkbox" id="datenschutz" name="datenschutz" value="datenschutz_true" required>
+        <label for="datenschutz">
+          * Hiermit willige ich ein, dass meine Daten ausschließlich zum Zweck der Abwicklung der hier
+          eingegebenen Anfrage und Bestellung verwendet werden. Ist dieser Zweck erfüllt, werden meine
+          Daten gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten dagegen sprechen. Sind alle
+          Aufbewahrungspflichten abgelaufen, werden die Daten vollständig gelöscht. Eine Verarbeitung
+          zu anderem Zwecke oder Weitergabe an Dritte erfolgt grundsätzlich nicht.
+        </label>
+        <input type="checkbox" id="hygiene" name="hygiene" value="hygiene_true" required>
+        <label for="hygiene">
+          * Hiermit willige ich ein, mich bei der Übergabe der Bestellung an die derzeitigen Vorgaben
+          und Empfehlungen für den sicheren Kontakt in der Öffentlichkeit zu halten, beispielsweise
+          Vorgaben von Bund, Land und Stadt Bonn sowie Empfehlungen des Robert-Koch-Instituts, um weder
+          mich noch die Mitarbeitenden des Weltladens noch andere Kund*innen zu gefährden.
+        </label>
+        <input type="checkbox" id="lieferung" name="lieferung" value="lieferung_true">
+        <label for="lieferung">
+          Ich gehöre zu einer Risikogruppe, habe engen Kontakt mit Personen aus Riskogruppen oder
+          befinde mich in Quarantäne, weshalb mir der Weg zum Weltladen unmöglich oder ein zu hohes
+          Risiko ist. Bitte teilen Sie mir mit, ob meine Bestellung an die oben angegebene Anschrift
+          geliefert werden kann. Für die Lieferung entstehen keine Kosten.
+        </label>
+      </fieldset>
+      <label>* = Pflichtfeld</label>
+      <fieldset>
+        <button type="submit">Bestellung abschicken</button>
+      </fieldset>
     </form>
   </div>
   <!-- <script src="https://vuejs.org/js/vue.js"></script> (Development version) -->
@@ -106,6 +125,21 @@
   <!-- <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script> -->
   <!-- <script src="ionicons.js"></script> -->
   <script>
+    window.onload = function() {
+      // Collapsible: https://alligator.io/css/collapsible/
+      let myLabels = document.querySelectorAll('.lbl-toggle');
+      Array.from(myLabels).forEach(label => {
+        label.addEventListener('keydown', e => {
+          // 32 === spacebar
+          // 13 === enter
+          if (e.which === 32 || e.which === 13) {
+            e.preventDefault();
+            label.click();
+          };
+        });
+      });
+    }
+
     Vue.config.ignoredElements = [/^ion-/];
     var app = new Vue({
       el: '#form',
