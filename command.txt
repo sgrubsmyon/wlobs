@@ -1,1 +1,1 @@
-sudo rsync -rtlPvin --exclude=.*.sw* deploy/* /var/www/html/coronashopper/; sudo chown -R www-data:www-data /var/www/html/coronashopper/
+sudo rsync -rtlPvin --delete --exclude=.*.sw* deploy/* /var/www/html/coronashopper/; sudo chown -R www-data:www-data /var/www/html/coronashopper/
