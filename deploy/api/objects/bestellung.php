@@ -34,6 +34,9 @@ class Bestellung {
     return $stmt;
   }
 
+  // retrieve the current max value of bestell_nr from the server
+  // because the bestellung table was locked, this is the bestell_nr of the
+  // order currently being places and shall be used in other associated tables
   function max_bestell_nr() {
     $query = "SELECT MAX(bestell_nr) AS mx FROM " . $this->table_name;
     $stmt = $this->conn->prepare($query);
@@ -44,7 +47,7 @@ class Bestellung {
     return -1;
   }
 
-  // retrieve the timestamp when bestellung was created from SQL server
+  // retrieve the timestamp when order was created from SQL server
   function bestell_timestamp($bestell_nr) {
     $query = "SELECT bestelldatum FROM " . $this->table_name . "
       WHERE bestell_nr = ?";
@@ -57,11 +60,28 @@ class Bestellung {
     return NULL;
   }
 
+  // retrieve the details of the submitted order from SQL server
+  function bestell_details($bestell_nr) {
+    $query = "SELECT position, stueckzahl, lieferant_name, artikel_nr,
+        artikel_name, ges_preis, ges_pfand, mwst_satz FROM " . $this->table_name . "_details
+      WHERE bestell_nr = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $bestell_nr);
+    if ($stmt->execute()) {
+      $details = array();
+      while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+        array_push($details, $row);
+      }
+      return $details;
+    }
+    return NULL;
+  }
+
   // create bestellung
   function create() {
     // make sure no-one else inserts a bestellung
     // until finished so that bestell_nr is not messed up
-    $this->conn->exec("LOCK TABLES bestellung WRITE");
+    $this->conn->exec("LOCK TABLES " . $this->table_name . " WRITE");
     $this->conn->exec("START TRANSACTION");
 
     $query = "INSERT INTO " . $this->table_name . "
@@ -95,10 +115,10 @@ class Bestellung {
           (bestell_nr, position, stueckzahl, lieferant_name, artikel_nr,
           artikel_name, ges_preis, ges_pfand, mwst_satz)
           SELECT
-          :bestell_nr, :position, :stueckzahl,
+            :bestell_nr, :position, :stueckzahl,
             lieferant_name, artikel_nr, artikel_name, :stueckzahl * vk_preis,
             :stueckzahl * pfand, mwst_satz
-            FROM artikel WHERE lieferant_name = :lieferant_name AND artikel_nr = :artikel_nr";
+          FROM artikel WHERE lieferant_name = :lieferant_name AND artikel_nr = :artikel_nr";
 
       // prepare query
       $stmt = $this->conn->prepare($query);
@@ -125,7 +145,11 @@ class Bestellung {
     }
     $this->conn->exec("COMMIT"); // things went OK: write changes permanently to DB
     $this->conn->exec("UNLOCK TABLES"); // make table available again in any case
-    return $this->bestell_timestamp($bestell_nr);
+    return array(
+      "nr" => $bestell_nr,
+      "datum" => $this->bestell_timestamp($bestell_nr),
+      "details" => $this->bestell_details($bestell_nr)
+    );
   }
 
 }

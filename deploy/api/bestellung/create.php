@@ -27,25 +27,36 @@ if (!empty($data->details)) {
   //$bestellung->created = date('Y-m-d H:i:s');
 
   // create the bestellung
-  $bestelldatum = $bestellung->create();
-  if (!is_null($bestelldatum)) {
+  $bestell_data = $bestellung->create();
+  if (!is_null($bestell_data)) {
+
     // set response code - 201 created
     http_response_code(201);
+
     // tell the user
-    echo json_encode(array("message" => "Bestellung was created.", "datum" => $bestelldatum));
+    echo json_encode(array(
+      "message" => "Bestellung was created.",
+      "nr" => $bestell_data["nr"],
+      "datum" => $bestell_data["datum"],
+      "details" => $bestell_data["details"]
+    ));
   } else {
+
     // if unable to create the bestellung, tell the user
     // set response code - 503 service unavailable
     http_response_code(503);
+
     // tell the user
-    echo json_encode(array("message" => "Unable to create bestellung."));
+    echo json_encode(array("message" => "Unable to create Bestellung."));
   }
 } else {
+
   // tell the user data is incomplete
   // set response code - 400 bad request
   http_response_code(400);
+
   // tell the user
-  echo json_encode(array("message" => "Unable to create bestellung. Data is incomplete. Key 'details' missing."));
+  echo json_encode(array("message" => "Unable to create Bestellung. Data is incomplete. Key 'details' missing."));
 }
 // Test with:
 // curl -i --header "Content-Type: application/json" --request POST --data '{"details":[{"position":"1","stueckzahl":"3","lieferant_name":"Bantam","artikel_nr":"B300N"},{"position":"2","stueckzahl":"5","lieferant_name":"Bantam","artikel_nr":"G161N"}]}' http://localhost/coronashopper/api/bestellung/create.php
