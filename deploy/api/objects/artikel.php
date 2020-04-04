@@ -19,7 +19,7 @@ class Artikel {
     $this->conn = $db;
   }
 
-  // read products
+  // read all products
   function read_all() {
     // select all query
     $query = "SELECT
@@ -45,10 +45,38 @@ class Artikel {
           array_push($artikel_arr, $row);
         }
       }
-
       return $artikel_arr;
     }
+    return NULL;
+  }
 
+  // read products from one product group
+  function read_group($groupname) {
+    // select group query
+    $query = "SELECT
+        produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
+        vk_preis, pfand, mwst_satz
+      FROM " . $this->table_name . "
+      WHERE produktgruppen_name = ?
+      ORDER BY produktgruppen_name, lieferant_name, artikel_nr";
+
+    // prepare query statement
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $groupname);
+
+    // execute query
+    if ($stmt->execute()) {
+      // artikel array
+      $artikel_arr = array();
+
+      $num = $stmt->rowCount();
+      if ($num > 0) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+          array_push($artikel_arr, $row);
+        }
+      }
+      return $artikel_arr;
+    }
     return NULL;
   }
 }

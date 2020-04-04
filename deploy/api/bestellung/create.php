@@ -41,7 +41,6 @@ if (!empty($data->details)) {
       "details" => $bestell_data["details"]
     ));
   } else {
-
     // if unable to create the bestellung, tell the user
     // set response code - 503 service unavailable
     http_response_code(503);

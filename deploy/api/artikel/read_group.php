@@ -1,7 +1,10 @@
 <?php
 // required headers
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Headers: access");
+header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Credentials: true");
+header('Content-Type: application/json');
 
 // include database and object files
 include_once '../config/database.php';
@@ -13,7 +16,12 @@ $db = $database->getConnection();
 
 // initialize object
 $artikel = new Artikel($db);
-$products = $artikel->read_all();
+
+// read name of product group from GET method
+$groupname = isset($_GET['name']) ? $_GET['name'] : die();
+
+// read the details of one product group
+$products = $artikel->read_group($groupname);
 
 if (is_null($products)) {
   // there was a DB error
