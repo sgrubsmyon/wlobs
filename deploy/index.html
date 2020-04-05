@@ -59,7 +59,6 @@
       </fieldset>
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
       <fieldset class="elem-group">
-        <button class="add-prod-button" type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
         <div v-for="item in items" id="product-selection">
           <div>
             <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
@@ -84,6 +83,7 @@
           </div>
           <button type="button" class="square" v-on:click="removeProduct(item.position)"><ion-icon name="trash-outline"></ion-icon></button>
         </div>
+        <button class="add-prod-button" type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
       </fieldset>
       <fieldset class="elem-group">
         <label for="message">Ich habe Interesse an folgenden weiteren Produkten oder folgende Fragen, bitte senden Sie mir dazu Informationen zu:</label>
@@ -153,8 +153,17 @@
       el: '#form',
       data: {
         productGroupList: [],
-        items: [],
-        defaultItem: {}
+        items: [{
+          position: 1,
+          productgroup: "",
+          products: [],
+          id: {
+            lieferant_name: "",
+            artikel_name: ""
+          },
+          vk_preis: 0,
+          stueck: 1
+        }]
       },
       methods: {
         addProduct: function() {
@@ -162,9 +171,17 @@
           if (this.items.length > 0) {
             currPosition = this.items[this.items.length - 1].position;
           }
-          let newItem = Object.assign({}, this.defaultItem);
-          newItem.position = currPosition + 1;
-          this.items.push(newItem);
+          this.items.push({
+            position: currPosition + 1,
+            productgroup: "",
+            products: [],
+            id: {
+              lieferant_name: "",
+              artikel_name: ""
+            },
+            vk_preis: 0,
+            stueck: 1
+          });
         },
         removeProduct: function(position) {
           this.items.splice(position - 1, 1);
@@ -200,30 +217,8 @@
       },
       mounted: function() {
         axios.get('api/produktgruppe/read_all.php')
-          .then(function(response) {
-            app.productGroupList = response.data.records;
-            let defaultProductGroup = app.productGroupList[0];
-            app.productsInGroupPromise(defaultProductGroup)
-              .then(prods => {
-                let defaultProduct = prods[0];
-                app.defaultItem = {
-                  position: 1,
-                  productgroup: defaultProductGroup,
-                  products: prods,
-                  id: {
-                    lieferant_name: defaultProduct.lieferant_name,
-                    artikel_nr: defaultProduct.artikel_nr
-                  },
-                  vk_preis: defaultProduct.vk_preis,
-                  stueck: 1
-                };
-                console.log(app.defaultItem);
-                app.items = [app.defaultItem];
-              });
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
+          .then(response => app.productGroupList = response.data.records)
+          .catch(error => console.log(error));
       }
     });
   </script>
