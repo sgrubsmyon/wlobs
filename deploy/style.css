@@ -206,7 +206,16 @@ div.form {
 
 fieldset {
   border: none;
-  /* margin: 40px 0; */
+  min-width: 0;
+  /* max-width: 100%; */
+  margin: 40px 0;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  fieldset {
+    margin: 20px 0;
+  }
 }
 
 #product-selection {
@@ -267,14 +276,9 @@ textarea {
   box-sizing: border-box;
   font-family: 'Ubuntu', sans-serif;
   font-size: 1em;
-  width: 500px;
-  max-width: 100%;
-  padding: 8px;
-}
-
-textarea {
   width: 800px;
   max-width: 100%;
+  padding: 8px;
 }
 
 .quant-col,
