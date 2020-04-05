@@ -22,7 +22,7 @@ class Produktgruppe {
       $num = $stmt->rowCount();
       if ($num > 0) {
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-          array_push($produktgruppen_arr, $row);
+          array_push($produktgruppen_arr, $row["produktgruppen_name"]);
         }
       }
       return $produktgruppen_arr;
