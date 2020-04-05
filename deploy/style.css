@@ -206,6 +206,7 @@ div.form {
 
 fieldset {
   border: none;
+  /* https://stackoverflow.com/questions/17408815/fieldset-resizes-wrong-appears-to-have-unremovable-min-width-min-content: */
   min-width: 0;
   /* max-width: 100%; */
   margin: 40px 0;
