@@ -7,8 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weltladen Bonn Bestellformular</title>
   <link rel="stylesheet" type="text/css" href="style.css">
-  <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule="" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"></script>
+  <!-- <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script> -->
+  <!-- <script nomodule="" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"></script> -->
+  <script nomodule="" src="lib/ionicons.js"></script>
+  <script type="module" src="lib/ionicons.esm.js"></script>
 </head>
 
 <body>
@@ -41,49 +43,47 @@
     <form action="send-mail.php" method="post">
       <fieldset class="elem-group">
         <label for="name">Vor- und Nachname*</label>
-        <input type="text" id="name" name="visitor_name" placeholder="Max Mustermann" pattern=[A-Z\sa-z]{3,50} required>
+        <input type="text" id="name" name="visitor_name" placeholder="Max Mustermann" pattern="[A-Z\sa-z]{3,50}" required>
       </fieldset>
       <fieldset class="elem-group">
         <label for="email">E-Mail-Adresse*</label>
-        <input type="email" id="email" name="visitor_email" placeholder="info@weltladen-bonn.org" required>
+        <input type="email" id="email" name="visitor_email" placeholder="max.mustermann@beispiel.de" required>
       </fieldset>
       <fieldset class="elem-group">
         <label for="phone">Telefonnummer*</label>
-        <input type="phone" id="phone" name="visitor_phone" placeholder="0228/697052" required>
+        <input type="text" id="phone" name="visitor_phone" placeholder="0228/12345678" pattern="[+0-9 /\-]{3,30}" required>
       </fieldset>
       <fieldset class="elem-group">
         <label for="address">Adresse</label>
-        <input type="address" id="address" name="visitor_address" placeholder="Maxstraße 36, 53111 Bonn" required>
+        <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}" required>
       </fieldset>
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
       <fieldset class="elem-group">
         <button class="add-prod-button" type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
-        <table id="product-selection">
-          <tbody>
-            <tr>
-              <th>Produktname</th>
-              <th>Stückzahl</th>
-            </tr>
-            <tr v-for="product in products">
-              <td>
-                <select v-bind:id="'product'+product.id" v-bind:name="'product'+product.id" v-model="product.productId" required>
-                  <option v-for="p in productList" v-bind:value="p.id">{{ p.name }}</option>
-                </select>
-                <div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                </div>
-              </td>
-              <td class="quant-col">
-                <input type="number" v-bind:id="'quantity'+product.id" v-bind:name="'quantity'+product.id" min="0" max="1000" v-model="product.quantity">
-              </td>
-              <td class="quant-col">
-                <button type="button" class="square" v-on:click="removeProduct(product.id)"><ion-icon name="trash-outline"></ion-icon></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-for="item in items" id="product-selection">
+          <div>
+            <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
+            <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts(item.position)" required>
+              <option v-for="pg in productGroupList" v-bind:value="pg">{{ pg }}</option>
+            </select>
+          </div>
+          <div>
+            <label v-bind:for="'product'+item.position">Produkt</label>
+            <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
+              <option v-for="p in item.products" v-bind:value="{'lieferant_name': p.lieferant_name, 'artikel_nr': p.artikel_nr}">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
+              <!-- JSON.stringify -->
+            </select>
+          </div>
+          <div>
+            <label v-bind:for="'stueck'+item.position">Stück</label>
+            <input type="number" v-bind:id="'stueck'+item.position" v-bind:name="'stueck'+item.position" min="1" max="1000" v-model="item.stueck">
+          </div>
+          <div>
+            <label v-bind:for="'preis'+item.position">Preis</label>
+            <input type="text" v-bind:id="'preis'+item.position" v-bind:name="'preis'+item.position" v-bind:value="item.vk_preis * item.stueck" disabled>
+          </div>
+          <button type="button" class="square" v-on:click="removeProduct(item.position)"><ion-icon name="trash-outline"></ion-icon></button>
+        </div>
       </fieldset>
       <fieldset class="elem-group">
         <label for="message">Ich habe Interesse an folgenden weiteren Produkten oder folgende Fragen, bitte senden Sie mir dazu Informationen zu:</label>
@@ -121,9 +121,15 @@
   </div>
   <!-- <script src="https://vuejs.org/js/vue.js"></script> (Development version) -->
   <!-- <script src="https://vuejs.org/js/vue.min.js"></script> (Production version) -->
-  <script src="vue.js"></script>
+  <script src="lib/vue.js"></script>
+  <!-- <script src="https://unpkg.com/vue-select@latest"></script>
+  <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css"> -->
+  <script src="lib/vue-select@latest"></script>
+  <link rel="stylesheet" href="lib/vue-select.css">
   <!-- <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script> -->
   <!-- <script src="ionicons.js"></script> -->
+  <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+  <script src="lib/axios.min.js"></script>
   <script>
     window.onload = function() {
       // Collapsible: https://alligator.io/css/collapsible/
@@ -140,52 +146,84 @@
       });
     }
 
+    Vue.component('v-select', VueSelect.VueSelect);
+
     Vue.config.ignoredElements = [/^ion-/];
     var app = new Vue({
       el: '#form',
       data: {
-        productList: [{
-          id: 'a',
-          name: 'Schoko-Osterhase',
-          price: "3.50"
-        }, {
-          id: 'b',
-          name: 'Zotter-Tafel "Naschhasi"',
-          price: "3.50"
-        }],
-        products: [{
-          id: 1,
-          productId: 'a',
-          quantity: 0,
-          price: "0.00"
-        }]
+        productGroupList: [],
+        items: [],
+        defaultItem: {}
       },
       methods: {
         addProduct: function() {
-          let currId = 0;
-          if (this.products.length > 0) {
-            currId = this.products[this.products.length - 1].id;
+          let currPosition = 0;
+          if (this.items.length > 0) {
+            currPosition = this.items[this.items.length - 1].position;
           }
-          this.products.push({
-            id: currId + 1,
-            productId: 'a',
-            quantity: 0
-          })
+          let newItem = Object.assign({}, this.defaultItem);
+          newItem.position = currPosition + 1;
+          this.items.push(newItem);
         },
-        removeProduct: function(id) {
-          let now = this.products;
-          console.log(now);
-          this.products.splice(id - 1, 1);
+        removeProduct: function(position) {
+          this.items.splice(position - 1, 1);
           // same behavior as:
-          // Vue.delete(this.products, id - 1);
-          /* reassign IDs as it is necessary when product was not removed from end */
+          // Vue.delete(this.items, position - 1);
+          /* reassign positions as it is necessary when product was not removed from end */
           let i = 1;
-          for (let product of this.products) {
-            product.id = i;
+          for (let item of this.items) {
+            item.position = i;
             i += 1;
           }
-          console.log(this.products);
+        },
+        productsInGroupPromise: function(productgroup) {
+          /* https://www.thetechieshouse.com/vue-js-rest-api-example-with-axios-ajax-alternative/ */
+          /* https://stackoverflow.com/questions/49661209/get-response-from-axios-with-await-async */
+          return axios.get('api/artikel/read_group.php', {
+              params: {
+                name: productgroup
+              }
+            })
+            .then(response => response.data.records)
+            .catch(error => console.log(error));
+        },
+        updateItemProducts: function(position) {
+          let item = this.items[position - 1];
+          this.productsInGroupPromise(item.productgroup)
+            .then(prods => item.products = prods);
+        },
+        updateItem: function(item) {
+          const prod = item.products.filter(p => p.lieferant_name === item.id.lieferant_name && p.artikel_nr === item.id.artikel_nr)[0];
+          item.vk_preis = prod.vk_preis;
         }
+      },
+      mounted: function() {
+        axios.get('api/produktgruppe/read_all.php')
+          .then(function(response) {
+            app.productGroupList = response.data.records;
+            let defaultProductGroup = app.productGroupList[0];
+            app.productsInGroupPromise(defaultProductGroup)
+              .then(prods => {
+                let defaultProduct = prods[0];
+                app.defaultItem = {
+                  position: 1,
+                  productgroup: defaultProductGroup,
+                  products: prods,
+                  id: {
+                    lieferant_name: defaultProduct.lieferant_name,
+                    artikel_nr: defaultProduct.artikel_nr
+                  },
+                  vk_preis: defaultProduct.vk_preis,
+                  stueck: 1
+                };
+                console.log(app.defaultItem);
+                app.items = [app.defaultItem];
+              });
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
       }
     });
   </script>

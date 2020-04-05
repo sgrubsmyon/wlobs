@@ -220,13 +220,26 @@ fieldset {
 }
 
 #product-selection {
+  display: grid;
+  grid-template-columns: 23% 48% 8% 8% 5%;
+  column-gap: 2%;
   margin-top: 20px;
   margin-bottom: 20px;
   width: 100%;
 }
 
-#product-selection>tbody>tr>th {
-  text-align: left;
+
+/* @media (max-width: 1024px) {
+  grid-template-columns: 30% 48% 8% 8%;
+} */
+
+#product-selection input,
+#product-selection select {
+  font-size: 0.8em;
+}
+
+#product-selection>button {
+  align-self: end;
 }
 
 .add-prod-button {
@@ -249,8 +262,8 @@ label {
 .checkboxes {
   display: grid;
   grid-template-columns: 40px auto;
-  grid-column-gap: 20px;
-  grid-row-gap: 20px;
+  column-gap: 20px;
+  row-gap: 20px;
   justify-items: center;
   align-items: center;
 }
