@@ -77,6 +77,19 @@ class Bestellung {
     return NULL;
   }
 
+  // retrieve the details of the submitted order from SQL server
+  function bestell_summe($bestell_nr) {
+    $query = "SELECT SUM(ges_preis) + SUM(ges_pfand) AS summe FROM " . $this->table_name . "_details
+      WHERE bestell_nr = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $bestell_nr);
+    if ($stmt->execute()) {
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      return $row['summe'];
+    }
+    return NULL;
+  }
+
   // create bestellung
   function create() {
     // make sure no-one else inserts a bestellung
@@ -148,7 +161,8 @@ class Bestellung {
     return array(
       "nr" => $bestell_nr,
       "datum" => $this->bestell_timestamp($bestell_nr),
-      "details" => $this->bestell_details($bestell_nr)
+      "details" => $this->bestell_details($bestell_nr),
+      "summe" => $this->bestell_summe($bestell_nr)
     );
   }
 

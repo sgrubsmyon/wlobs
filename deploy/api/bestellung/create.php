@@ -38,7 +38,8 @@ if (!empty($data->details)) {
       "message" => "Bestellung was created.",
       "nr" => $bestell_data["nr"],
       "datum" => $bestell_data["datum"],
-      "details" => $bestell_data["details"]
+      "details" => $bestell_data["details"],
+      "summe" => $bestell_data["summe"]
     ));
   } else {
     // if unable to create the bestellung, tell the user
