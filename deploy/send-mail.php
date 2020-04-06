@@ -76,6 +76,8 @@ if($_POST) {
     .'Content-type: text/html; charset=utf-8' . "\r\n"
     .'From: ' . $visitor_email . "\r\n";
 
+  $curr_fmt = new NumberFormatter('de_DE', NumberFormatter::CURRENCY);
+
   /* Construct the email message */
   $message = "
     <style>
@@ -154,8 +156,8 @@ if($_POST) {
           <td>" . $item["artikel_nr"] . "</td>
           <td>" . $item["artikel_name"] . "</td>
           <td>" . $item["stueckzahl"] . "</td>
-          <td>" . $item["ges_preis"] . "</td>
-          <td>" . (is_null($item["ges_pfand"]) ? "" : $item["ges_pfand"]) . "</td>
+          <td>" . $curr_fmt->formatCurrency($item["ges_preis"], "EUR") . "</td>
+          <td>" . (is_null($item["ges_pfand"]) ? "—" : $curr_fmt->formatCurrency($item["ges_pfand"], "EUR")) . "</td>
         </tr>
       ";
     }
@@ -168,7 +170,7 @@ if($_POST) {
         <tbody>
           <tr>
             <th>Voraussichtlicher Gesamtbetrag:</th>
-            <td>" . $bestellung["summe"] . "</td>
+            <td>" . $curr_fmt->formatCurrency($bestellung["summe"], "EUR") . "</td>
           </tr>
         </tbody>
       </tbody>
