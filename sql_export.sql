@@ -3,11 +3,11 @@ USE kasse;
 SELECT DISTINCT
   lieferant_name, a.artikel_nr, a.artikel_name,
   (CASE
-    WHEN (p.toplevel_id = 2 AND p.sub_id = 17 AND lieferant_name = "Bantam") THEN "Saatgut"
+    WHEN (p.toplevel_id = 2 AND p.sub_id = 17 AND (lieferant_name = "Bantam" OR lieferant_name = "Bingenheimer Saatgut AG")) THEN "Saatgut"
     WHEN (p.toplevel_id = 2 AND p.sub_id = 17 AND (lieferant_name = "GEPA" OR lieferant_name = "WeltPartner" OR lieferant_name = "Ethiquable")) THEN "Ostern"
-    WHEN (p.toplevel_id = 3 AND p.sub_id = 2) THEN "Alkoholische Getränke"
-    WHEN (p.toplevel_id = 3 AND p.sub_id > 2) THEN "Alkoholfreie Getränke"
-    WHEN (p.sub_id IS NOT NULL) THEN (SELECT produktgruppen_name FROM produktgruppe WHERE toplevel_id = p.toplevel_id AND sub_id = p.sub_id AND ISNULL(subsub_id))
+    WHEN (p.toplevel_id = 3 AND p.sub_id = 2) THEN "Getränke mit Alkohol"
+    WHEN (p.toplevel_id = 3 AND p.sub_id > 2) THEN "Getränke ohne Alkohol"
+    WHEN ((p.toplevel_id = 2 OR p.toplevel_id = 3) AND p.sub_id IS NOT NULL) THEN (SELECT produktgruppen_name FROM produktgruppe WHERE toplevel_id = p.toplevel_id AND sub_id = p.sub_id AND ISNULL(subsub_id))
     WHEN (p.toplevel_id = 2 OR p.toplevel_id = 3) THEN produktgruppen_name
     ELSE "Kosmetik, Hygiene und Haushalt"
   END) AS produktgruppe,
