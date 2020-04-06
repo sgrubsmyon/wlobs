@@ -261,7 +261,7 @@ if($_POST) {
 
   if (
     mail($recipient, "[Bestellung] Nr. " . $bestellung["nr"], $recipient_msg, $headers) &&
-    mail($visitor_email, "Bestellbestätigung Weltladen Bonn" . $bestellung["nr"], $visitor_msg, $headers)
+    mail($visitor_email, "Bestellbestätigung Weltladen Bonn", $visitor_msg, $headers)
   ) {
     echo $visitor_response_msg . $order_msg . $ps_msg;
   } else {
