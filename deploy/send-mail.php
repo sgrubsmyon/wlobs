@@ -1,6 +1,6 @@
 <?php
 if($_POST) {
-  $recipient = "markus.voge@gmx.de";
+  $recipient = "test@example.org";
   $visitor_name = "";
   $visitor_email = "";
   $visitor_phone = "";
@@ -72,14 +72,10 @@ if($_POST) {
   }
   $bestellung = json_decode($result, true);
 
-  $headers  = 'MIME-Version: 1.0' . "\r\n"
-    .'Content-type: text/html; charset=utf-8' . "\r\n"
-    .'From: ' . $visitor_email . "\r\n";
-
   $curr_fmt = new NumberFormatter('de_DE', NumberFormatter::CURRENCY);
 
-  /* Construct the email message */
-  $message = "
+  /* Construct the order message */
+  $order_msg = "
     <style>
       table { border-collapse: collapse; }
       table, th, td { border: 1px solid black; }
@@ -106,20 +102,20 @@ if($_POST) {
           </tr>
   ";
   if (!empty($visitor_address)) {
-    $message = $message . "
+    $order_msg = $order_msg . "
       <tr>
         <th>Lieferadresse:</th>
         <td>$visitor_address</a></td>
       </tr>
     ";
   }
-  $message = $message . "
+  $order_msg = $order_msg . "
         </tbody>
       </table>
     </p>
   ";
   /* Product list: */
-  $message = $message . "
+  $order_msg = $order_msg . "
     <h3>Bestelldaten</h3>
     <p>
       <table class=\"keyvalue\">
@@ -149,7 +145,7 @@ if($_POST) {
           </tr>
     ";
     foreach ($bestellung["details"] as $item) {
-      $message = $message . "
+      $order_msg = $order_msg . "
         <tr>
           <td>" . $item["position"] . "</td>
           <td>" . $item["lieferant_name"] . "</td>
@@ -161,7 +157,7 @@ if($_POST) {
         </tr>
       ";
     }
-  $message = $message . "
+  $order_msg = $order_msg . "
         </tbody>
       </table>
     </p>
@@ -178,21 +174,108 @@ if($_POST) {
     ";
   if (!empty($visitor_message)) {
     /* Add general message from text box: */
-    $message = $message . "
+    $order_msg = $order_msg . "
       <h3>Weitere Hinweise de*r Kund*in:</h3>
       <p>$visitor_message</p>
       ";
   }
 
-  echo $message;
-  // if(mail($recipient, "[Bestellung] Nr. " . $bestellung["nr"], $message, $headers)) {
-  //   echo "<p>Thank you for contacting us, $visitor_name. You will get a reply within 24 hours.</p>";
-  //   echo $message;
-  // } else {
-  //   echo '<p>We are sorry but the email did not go through.</p>';
-  // }
+  /************************************************************************/
+
+  /* Email sending */
+
+  $headers  = 'MIME-Version: 1.0' . "\r\n"
+    .'Content-type: text/html; charset=utf-8' . "\r\n"
+    .'From: ' . $visitor_email . "\r\n";
+
+  /* Construct the email message */
+  $message = "
+    <p>
+      Liebe Kundin, lieber Kunde,
+    </p>
+
+    <p>
+      vielen Dank für die Bestellung über unser Webformular!
+    </p>
+
+    <p>
+      Wir melden uns in Kürze bei Ihnen mit den Details zur Abholung und
+      um ggf. Fragen zu klären. Der unten angezeigte Gesamtpreis ist ohne
+      Gewähr und dient nur zu ihrer Orientierung. Er könnte noch abweichen,
+      wenn z.B. einzelne bestellte Produkte nicht lieferbar sind, es
+      Preisänderungen gab oder Sie Artikel im Freitextfeld hinzugefügt haben.
+      Gesamtsumme und eventuelle Abweichungen von Ihrer Bestellung teilen wir
+      Ihnen so schnell wie möglich mit.
+    </p>
+
+    <p>
+      Vielen Dank dass Sie den Fairen Handel in Bonn und weltweit auch in
+      Corona-Zeiten unterstützen!
+    </p>
+
+    <p>
+      Bleiben Sie gesund!<br>
+      Ihr Team vom Weltladen Bonn e.V.
+    </p>
+
+    <p>
+      Folgende Bestellung ist bei uns eingegangen:
+    </p>
+  ";
+  $message = $message . $order_msg;
+  $message = $message . "
+    <p>
+      <b>PS:</b> Wir Informieren Sie gerne in einem (Corona-)Ladeninformationen-Newsletter,
+      falls sich an unserem Liefer- und Abholangebot etwas ändert und wenn der normale
+      Ladenbetrieb wieder aufgenommen wird. Bitte tragen Sie sich dazu unter folgendem Link
+      ein:
+      <a href=\"https://weltladen-bonn.us8.list-manage.com/subscribe?u=8efbe21878a044bec16a3c8bd&id=a80317e63d\">
+        https://weltladen-bonn.us8.list-manage.com/subscribe?u=8efbe21878a044bec16a3c8bd&id=a80317e63d
+      </a>
+    </p>
+  ";
+
+
+  $visitor_response_msg = "
+    <h2>Vielen Dank für Ihre Bestellung!</h2>
+
+    <p>
+      Sie haben eine automatische Bestätigungsmail mit den Details Ihrer Bestellung
+      und der Bestellnummer erhalten. Bitte prüfen Sie ggf. Ihren Spamverdacht-Ordner,
+      falls die Mail nicht angekommen sein sollte.
+    </p>
+
+    <p>
+      Wir melden uns in Kürze bei Ihnen mit den Details zur Abholung und um ggf. Fragen zu klären.
+    </p>
+
+    <p>
+      Vielen Dank dass Sie den Fairen Handel in Bonn und weltweit auch in Corona-Zeiten unterstützen!<br>
+      Ihr Team vom Weltladen Bonn e.V.
+    </p>
+  ";
+  $visitor_response_msg = $visitor_response_msg . $order_msg;
+  $visitor_response_msg = $visitor_response_msg . "
+    <p>
+      <b>PS:</b> Wir Informieren Sie gerne in einem (Corona-)Ladeninformationen-Newsletter,
+      falls sich an unserem Liefer- und Abholangebot etwas ändert und wenn der normale Ladenbetrieb
+      wieder aufgenommen wird. Bitte tragen Sie sich dazu unter folgendem Link ein:
+      <a href=\"https://weltladen-bonn.us8.list-manage.com/subscribe?u=8efbe21878a044bec16a3c8bd&id=a80317e63d\">
+        https://weltladen-bonn.us8.list-manage.com/subscribe?u=8efbe21878a044bec16a3c8bd&id=a80317e63d
+      </a>
+    </p>
+  ";
+
+  if (
+    mail($recipient, "[Bestellung] Nr. " . $bestellung["nr"], $message, $headers) &&
+    mail($visitor_email, "Bestellbestätigung Weltladen Bonn" . $bestellung["nr"], $message, $headers)
+  ) {
+    echo $visitor_response_msg;
+  } else {
+    echo "<p>Leider gab es ein Problem beim Versenden der Bestellung. Sie können Ihre Bestellung manuell an <a href=\"info@weltladen-bonn.org\">info@weltladen-bonn.org</a> senden.</p>";
+  }
 
 } else {
-  echo '<p>Something went wrong</p>';
+  echo '<p>Etwas ging schief. Wenden Sie sich an <a href=\"info@weltladen-bonn.org\">info@weltladen-bonn.org</a>.</p>';
 }
 ?>
