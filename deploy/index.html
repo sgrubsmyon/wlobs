@@ -55,7 +55,7 @@
       </fieldset>
       <fieldset class="elem-group">
         <label for="address">Adresse</label>
-        <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}" required>
+        <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}">
       </fieldset>
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
       <fieldset class="elem-group">
@@ -63,13 +63,15 @@
           <div>
             <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
             <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts(item.position)" required>
+              <option value="" disabled selected>Bitte auswählen...</option>
               <option v-for="pg in productGroupList" v-bind:value="pg">{{ pg }}</option>
             </select>
           </div>
           <div>
             <label v-bind:for="'product'+item.position">Produkt</label>
             <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
-              <option v-for="p in item.products" v-bind:value="{'lieferant_name': p.lieferant_name, 'artikel_nr': p.artikel_nr}">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
+              <option value="" disabled selected>Bitte auswählen...</option>
+              <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
               <!-- JSON.stringify -->
             </select>
           </div>
@@ -208,16 +210,26 @@
         updateItemProducts: function(position) {
           let item = this.items[position - 1];
           this.productsInGroupPromise(item.productgroup)
-            .then(prods => item.products = prods);
+            .then(prods => {
+              item.products = prods;
+              item.id = "";
+            });
         },
         updateItem: function(item) {
-          const prod = item.products.filter(p => p.lieferant_name === item.id.lieferant_name && p.artikel_nr === item.id.artikel_nr)[0];
+          const prod = item.products.filter(p => {
+            let id = item.id.split("______");
+            return p.lieferant_name === id[0] && p.artikel_nr === id[1]
+          })[0];
           item.vk_preis = prod.vk_preis;
         }
       },
       mounted: function() {
         axios.get('api/produktgruppe/read_all.php')
-          .then(response => app.productGroupList = response.data.records)
+          .then(response => {
+            let pgl = response.data.records;
+            pgl = pgl.filter(pg => pg !== "Bananen");
+            app.productGroupList = pgl;
+          })
           .catch(error => console.log(error));
       }
     });

@@ -1,22 +1,34 @@
 <?php
 if($_POST) {
-  $recipient = "test@example.org";
+  $recipient = "markus.voge@gmx.de";
   $visitor_name = "";
   $visitor_email = "";
-  $address = "";
-  $concerned_department = "";
+  $visitor_phone = "";
+  $visitor_address = "";
   $visitor_message = "";
+  $datenschutz = "";
+  $hygiene = "";
+  $lieferung = "";
 
-  if(isset($_POST['visitor_name'])) {
+  if (isset($_POST['visitor_name'])) {
     $visitor_name = filter_var($_POST['visitor_name'], FILTER_SANITIZE_STRING);
   }
 
-  if(isset($_POST['visitor_email'])) {
+  if (isset($_POST['visitor_email'])) {
     $visitor_email = str_replace(array("\r", "\n", "%0a", "%0d"), '', $_POST['visitor_email']);
     $visitor_email = filter_var($visitor_email, FILTER_VALIDATE_EMAIL);
   }
 
-  if(isset($_POST['visitor_message'])) {
+  if (isset($_POST['visitor_phone'])) {
+    $visitor_phone = str_replace(array("\r", "\n", "%0a", "%0d"), '', $_POST['visitor_phone']);
+    $visitor_phone = filter_var($visitor_phone, FILTER_SANITIZE_STRING);
+  }
+
+  if(isset($_POST['visitor_address'])) {
+    $visitor_address = filter_var($_POST['visitor_address'], FILTER_SANITIZE_STRING);
+  }
+
+  if (isset($_POST['visitor_message'])) {
     $visitor_message = htmlspecialchars($_POST['visitor_message']);
   }
 
@@ -30,7 +42,7 @@ if($_POST) {
   $timestamp = date('d.m.Y H:i:s', time());
   $message = "
     <h2>Bestellung</h2>
-    <h3>Allgemeine Daten</h3>
+    <h3>Kontaktdaten</h3>
     <table>
       <tbody>
         <tr>
@@ -45,17 +57,36 @@ if($_POST) {
           <th>E-Mail:</th>
           <td><a href='mailto:$visitor_email'>$visitor_email</a></td>
         </tr>
+        <tr>
+          <th>Telefonnummer:</th>
+          <td>$visitor_phone</a></td>
+        </tr>
+  ";
+  if (!empty($visitor_address)) {
+    $message = $message . "
+      <tr>
+        <th>Lieferadresse:</th>
+        <td>$visitor_address</a></td>
+      </tr>
+    ";
+  }
+  $message = $message . "
       </tbody>
     </table>
-    ";
+  ";
   /* Product list: */
   $message = $message . "
     <h3>Produktliste</h3>
     <table>
       <tbody>
         <tr>
+          <!--
+          <th>Position</th>
+          <th>Lieferant</th>
+          <th>Artikel-Nr.</th>
+          -->
           <th>Produkt</th>
-          <th>Stückzahl</th>
+          <th>Stück</th>
         </tr>
     ";
   $still_processing = true;
@@ -64,12 +95,12 @@ if($_POST) {
     $i++;
     if (array_key_exists("product".$i, $_POST)) {
       $prod = $_POST["product".$i];
-      $quant = $_POST["quantity".$i];
-      if ($quant > 0) {
+      $stueck = $_POST["stueck".$i];
+      if ($stueck > 0) {
         $message = $message . "
               <tr>
                 <td>$prod</td>
-                <td>$quant</td>
+                <td>$stueck</td>
               </tr>
           ";
       }
@@ -81,7 +112,7 @@ if($_POST) {
       </tbody>
     </table>
     ";
-  if (strlen($visitor_message) > 0) {
+  if (!empty($visitor_message)) {
     /* Add general message from text box: */
     $message = $message . "
       <h3>Weitere Hinweise de*r Kund*in:</h3>
