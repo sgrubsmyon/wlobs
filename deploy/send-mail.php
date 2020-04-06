@@ -76,6 +76,9 @@ if($_POST) {
 
   /* Construct the order message */
   $order_msg = "
+    <p>
+      Folgende Bestellung ist bei uns eingegangen:
+    </p>
     <style>
       table { border-collapse: collapse; }
       table, th, td { border: 1px solid black; }
@@ -169,7 +172,7 @@ if($_POST) {
             <td>" . $curr_fmt->formatCurrency($bestellung["summe"], "EUR") . "</td>
           </tr>
         </tbody>
-      </tbody>
+      </table>
     </p>
     ";
   if (!empty($visitor_message)) {
@@ -189,7 +192,7 @@ if($_POST) {
     .'From: ' . $visitor_email . "\r\n";
 
   /* Construct the email message */
-  $message = "
+  $email_greet_msg = "
     <p>
       Liebe Kundin, lieber Kunde,
     </p>
@@ -217,14 +220,13 @@ if($_POST) {
       Bleiben Sie gesund!<br>
       Ihr Team vom Weltladen Bonn e.V.
     </p>
-
-    <p>
-      Folgende Bestellung ist bei uns eingegangen:
-    </p>
   ";
-  $message = $message . $order_msg;
-  $message = $message . "
-    <p>
+
+  $ps_msg = "
+    <style>
+      p.ps { margin-top: 64px; }
+    </style>
+    <p class=\"ps\">
       <b>PS:</b> Wir Informieren Sie gerne in einem (Corona-)Ladeninformationen-Newsletter,
       falls sich an unserem Liefer- und Abholangebot etwas ändert und wenn der normale
       Ladenbetrieb wieder aufgenommen wird. Bitte tragen Sie sich dazu unter folgendem Link
@@ -234,7 +236,6 @@ if($_POST) {
       </a>
     </p>
   ";
-
 
   $visitor_response_msg = "
     <h2>Vielen Dank für Ihre Bestellung!</h2>
@@ -254,23 +255,15 @@ if($_POST) {
       Ihr Team vom Weltladen Bonn e.V.
     </p>
   ";
-  $visitor_response_msg = $visitor_response_msg . $order_msg;
-  $visitor_response_msg = $visitor_response_msg . "
-    <p>
-      <b>PS:</b> Wir Informieren Sie gerne in einem (Corona-)Ladeninformationen-Newsletter,
-      falls sich an unserem Liefer- und Abholangebot etwas ändert und wenn der normale Ladenbetrieb
-      wieder aufgenommen wird. Bitte tragen Sie sich dazu unter folgendem Link ein:
-      <a href=\"https://weltladen-bonn.us8.list-manage.com/subscribe?u=8efbe21878a044bec16a3c8bd&id=a80317e63d\">
-        https://weltladen-bonn.us8.list-manage.com/subscribe?u=8efbe21878a044bec16a3c8bd&id=a80317e63d
-      </a>
-    </p>
-  ";
+
+  $recipient_msg = $order_msg;
+  $visitor_msg = $email_greet_msg . $order_msg . $ps_msg;
 
   if (
-    mail($recipient, "[Bestellung] Nr. " . $bestellung["nr"], $message, $headers) &&
-    mail($visitor_email, "Bestellbestätigung Weltladen Bonn" . $bestellung["nr"], $message, $headers)
+    mail($recipient, "[Bestellung] Nr. " . $bestellung["nr"], $recipient_msg, $headers) &&
+    mail($visitor_email, "Bestellbestätigung Weltladen Bonn" . $bestellung["nr"], $visitor_msg, $headers)
   ) {
-    echo $visitor_response_msg;
+    echo $visitor_response_msg . $order_msg . $ps_msg;
   } else {
     echo "<p>Leider gab es ein Problem beim Versenden der Bestellung. Sie können Ihre Bestellung manuell an <a href=\"info@weltladen-bonn.org\">info@weltladen-bonn.org</a> senden.</p>";
   }
