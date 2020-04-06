@@ -97,20 +97,6 @@ input#collapsible {
 
 .lbl-toggle {
   display: block;
-  width: 200px;
-  /* min-width: 100px; */
-  font-weight: bold;
-  /* font-family: monospace; */
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  text-align: center;
-  padding: 1rem;
-  color: #DDFED6;
-  background: #80ca2c;
-  cursor: pointer;
-  border-radius: 7px;
-  transition: all 0.25s ease-out;
-  /* margin: auto; */
 }
 
 .lbl-toggle:hover {
@@ -144,22 +130,15 @@ input#collapsible {
   /* content invisible by default: */
   max-height: 0px;
   overflow: hidden;
+  /* another option: smaller collapsed max-height and: */
+  /* overflow: auto; */
   transition: max-height .25s ease-in-out;
 }
 
 .toggle:checked+.lbl-toggle+.collapsible-content {
   /* content becomes visible when toggled: */
-  max-height: 100vh;
+  max-height: 500vh;
 }
-
-
-/* 
-.toggle:checked+.lbl-toggle::before {
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-top: 7px solid currentColor;
-  border-bottom: none;
-} */
 
 .toggle:checked+.lbl-toggle::before {
   transform: rotate(90deg) translateX(-3px);
@@ -287,20 +266,10 @@ textarea {
   height: 250px;
 }
 
-button {
-  /* background: green; */
-  /* color: white; */
-  /* border: 2px solid darkgreen; */
-  /* font-family: 'Ubuntu', sans-serif; */
-  /* font-size: 1.25em; */
-  /* font-weight: 500; */
-  /* border-radius: 6px; */
-  /* cursor: pointer; */
-  /* display: block; */
+button,
+.lbl-toggle {
   width: 200px;
-  /* min-width: 100px; */
   font-weight: bold;
-  /* font-family: monospace; */
   font-size: 1.2rem;
   text-transform: uppercase;
   text-align: center;
@@ -320,18 +289,13 @@ button:hover {
 button.square {
   width: 40px;
   height: 40px;
-  background: whitesmoke;
-  color: gray;
-  border: 2px solid gray;
-  font-family: 'Ubuntu', sans-serif;
-  /* font-size: 1.25em; */
-  font-weight: 500;
-  border-radius: 6px;
-  cursor: pointer;
+  background: #ddd;
+  color: dimgray;
+  padding: 0;
 }
 
 button.square:hover {
-  border: 2px solid black;
+  background: #aaa;
 }
 
 button[type='submit'] {
