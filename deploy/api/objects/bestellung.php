@@ -79,7 +79,7 @@ class Bestellung {
 
   // retrieve the details of the submitted order from SQL server
   function bestell_summe($bestell_nr) {
-    $query = "SELECT SUM(ges_preis) + SUM(ges_pfand) AS summe FROM " . $this->table_name . "_details
+    $query = "SELECT IFNULL(SUM(ges_preis), 0) + IFNULL(SUM(ges_pfand), 0) AS summe FROM " . $this->table_name . "_details
       WHERE bestell_nr = ?";
     $stmt = $this->conn->prepare($query);
     $stmt->bindParam(1, $bestell_nr);
