@@ -43,7 +43,7 @@ CREATE TABLE bestellung_details (
 -- CREATE TABLE bestellung_secret (
 --     bestell_nr INTEGER(10) UNSIGNED NOT NULL,
 --     name VARCHAR(50) NOT NULL,
---     email VARCHAR(100) NOT NULL,
+--     email VARCHAR(72) NOT NULL,
 --     adresse VARCHAR(100) DEFAULT NULL,
 --     tel VARCHAR(30) DEFAULT NULL,
 --     hinweise VARCHAR(500) DEFAULT NULL,

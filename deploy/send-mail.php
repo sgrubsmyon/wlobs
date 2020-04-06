@@ -32,6 +32,21 @@ if($_POST) {
     $visitor_message = htmlspecialchars($_POST['visitor_message']);
   }
 
+  $datenschutz = "Nein";
+  if (isset($_POST['datenschutz'])) {
+    $datenschutz = $_POST['datenschutz'] ? "Ja" : "Nein";
+  }
+
+  $hygiene = "Nein";
+  if (isset($_POST['hygiene'])) {
+    $hygiene = $_POST['hygiene'] ? "Ja" : "Nein";
+  }
+
+  $lieferung = "Nein";
+  if (isset($_POST['lieferung'])) {
+    $lieferung = $_POST['lieferung'] ? "Ja" : "Nein";
+  }
+
   /* Process data to be sent to API from POST request (form submit) */
   $data = array('details' => array());
 
@@ -131,6 +146,18 @@ if($_POST) {
             <th>Zeit:</th>
             <td>" . $bestellung["datum"] . "</td>
           </tr>
+          <tr>
+            <th>Zustimmung zur Verwendung meiner Daten?</th>
+            <td>" . $datenschutz . "</td>
+          </tr>
+          <tr>
+            <th>Zustimmung zur Einhaltung der Hygieneregeln?</th>
+            <td>" . $hygiene . "</td>
+          </tr>
+          <tr>
+            <th>Lieferung erforderlich?</th>
+            <td>" . $lieferung . "</td>
+          </tr>
         </tbody>
       </table>
     </p>
@@ -212,6 +239,11 @@ if($_POST) {
     </p>
 
     <p>
+      Bei Fragen Ihrerseits können Sie sich an <a href=\"info@weltladen-bonn.org\">info@weltladen-bonn.org</a>
+      wenden.
+    </p>
+
+    <p>
       Vielen Dank dass Sie den Fairen Handel in Bonn und weltweit auch in
       Corona-Zeiten unterstützen!
     </p>
@@ -224,7 +256,7 @@ if($_POST) {
 
   $ps_msg = "
     <style>
-      p.ps { margin-top: 64px; }
+      p.ps { margin-top: 40px; }
     </style>
     <p class=\"ps\">
       <b>PS:</b> Wir Informieren Sie gerne in einem (Corona-)Ladeninformationen-Newsletter,
@@ -248,6 +280,8 @@ if($_POST) {
 
     <p>
       Wir melden uns in Kürze bei Ihnen mit den Details zur Abholung und um ggf. Fragen zu klären.
+      Bei Fragen Ihrerseits können Sie sich an <a href=\"info@weltladen-bonn.org\">info@weltladen-bonn.org</a>
+      wenden.
     </p>
 
     <p>
