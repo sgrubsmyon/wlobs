@@ -270,6 +270,14 @@ textarea {
   height: 250px;
 }
 
+.ges-betrag {
+  text-align: right;
+}
+
+.ges-betrag>input {
+  width: 100px;
+}
+
 button,
 .lbl-toggle {
   width: 200px;

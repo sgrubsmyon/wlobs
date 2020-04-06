@@ -72,7 +72,6 @@
             <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
               <option value="" disabled selected>Bitte auswählen...</option>
               <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
-              <!-- JSON.stringify -->
             </select>
           </div>
           <div>
@@ -81,9 +80,13 @@
           </div>
           <div>
             <label v-bind:for="'preis'+item.position">Preis</label>
-            <input type="text" v-bind:id="'preis'+item.position" v-bind:name="'preis'+item.position" v-bind:value="item.vk_preis * item.stueck" disabled>
+            <input type="text" v-bind:id="'preis'+item.position" v-bind:name="'preis'+item.position" v-bind:value="preis(item)" disabled>
           </div>
           <button type="button" class="square" v-on:click="removeProduct(item.position)"><ion-icon name="trash-outline"></ion-icon></button>
+        </div>
+        <div class="ges-betrag">
+          <label for="ges-betrag">Gesamtbetrag (inkl. Pfand):</label>
+          <input type="text" id="ges-betrag" v-bind:value="gesBetrag()" disabled>
         </div>
         <button class="add-prod-button" type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
       </fieldset>
@@ -148,6 +151,11 @@
       });
     }
 
+    let currFormatter = Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR'
+    });
+
     Vue.component('v-select', VueSelect.VueSelect);
 
     Vue.config.ignoredElements = [/^ion-/];
@@ -164,6 +172,7 @@
             artikel_name: ""
           },
           vk_preis: 0,
+          pfand: 0,
           stueck: 1
         }]
       },
@@ -182,6 +191,7 @@
               artikel_name: ""
             },
             vk_preis: 0,
+            pfand: 0,
             stueck: 1
           });
         },
@@ -221,6 +231,23 @@
             return p.lieferant_name === id[0] && p.artikel_nr === id[1]
           })[0];
           item.vk_preis = prod.vk_preis;
+          item.pfand = prod.pfand;
+        },
+        preis: function(item) {
+          return currFormatter.format(item.vk_preis * item.stueck)
+        },
+        gesBetrag: function() {
+          let gesPreis = 0;
+          for (let i of this.items) {
+            gesPreis = gesPreis + i.vk_preis * i.stueck;
+          }
+          let gesPfand = 0;
+          for (let i of this.items) {
+            if (i.pfand !== null) {
+              gesPfand = gesPfand + i.pfand * i.stueck;
+            }
+          }
+          return currFormatter.format(gesPreis + gesPfand);
         }
       },
       mounted: function() {
