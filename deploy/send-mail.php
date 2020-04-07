@@ -1,6 +1,6 @@
 <?php
 if($_POST) {
-  $recipient = "test@example.org";
+  $recipient = "info@weltladen-bonn.org";
   $visitor_name = "";
   $visitor_email = "";
   $visitor_phone = "";
@@ -81,7 +81,7 @@ if($_POST) {
       )
   );
   $context  = stream_context_create($options);
-  $result = file_get_contents('http://127.0.0.1/coronashopper/api/bestellung/create.php', false, $context);
+  $result = file_get_contents('https://www.weltladen-bonn.org/bestellung/api/bestellung/create.php', false, $context);
   if (FALSE === $result) {
     exit("Failed to open stream to API");
   }
@@ -212,12 +212,6 @@ if($_POST) {
 
   /************************************************************************/
 
-  /* Email sending */
-
-  $headers  = 'MIME-Version: 1.0' . "\r\n"
-    .'Content-type: text/html; charset=utf-8' . "\r\n"
-    .'From: ' . $visitor_email . "\r\n";
-
   /* Construct the email message */
   $email_greet_msg = "
     <p>
@@ -292,6 +286,12 @@ if($_POST) {
 
   $recipient_msg = $order_msg;
   $visitor_msg = $email_greet_msg . $order_msg . $ps_msg;
+
+  /* Email sending */
+
+  $headers  = "MIME-Version: 1.0" . "\r\n"
+    . "Content-type: text/html; charset=utf-8" . "\r\n"
+    . "From: Weltladen Bonn <" . $recipient . ">\r\n";
 
   if (
     mail($recipient, "[Bestellung] Nr. " . $bestellung["nr"], $recipient_msg, $headers) &&
