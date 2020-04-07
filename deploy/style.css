@@ -59,13 +59,7 @@
 body {
   font-family: 'Open Sans Condensed', sans-serif;
   font-weight: 300;
-  font-size: 1.5em;
-}
-
-@media (max-width: 768px) {
-  body {
-    font-size: 1.25em;
-  }
+  font-size: 1.2em;
 }
 
 h1 {
@@ -187,7 +181,7 @@ fieldset {
 
 #product-selection {
   display: grid;
-  grid-template-columns: 23% 48% 8% 8% 5%;
+  grid-template-columns: 20% 48% 8% 11% 5%;
   column-gap: 2%;
   margin-top: 20px;
   margin-bottom: 20px;
