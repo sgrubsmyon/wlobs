@@ -43,7 +43,7 @@
     <form action="send-mail.php" method="post">
       <fieldset class="elem-group">
         <label for="name">Vor- und Nachname*</label>
-        <input type="text" id="name" name="visitor_name" placeholder="Max Mustermann" pattern="[A-Z\sa-z]{3,50}" required>
+        <input type="text" id="name" name="visitor_name" placeholder="Max Mustermann" pattern="[A-Z\sa-z-]{3,50}" required>
       </fieldset>
       <fieldset class="elem-group">
         <label for="email">E-Mail-Adresse*</label>
@@ -125,8 +125,9 @@
     </form>
   </div>
   <!-- <script src="https://vuejs.org/js/vue.js"></script> (Development version) -->
+  <!-- <script src="lib/vue.js"></script> -->
   <!-- <script src="https://vuejs.org/js/vue.min.js"></script> (Production version) -->
-  <script src="lib/vue.js"></script>
+  <script src="lib/vue.min.js"></script>
   <!-- <script src="https://unpkg.com/vue-select@latest"></script>
   <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css"> -->
   <!-- <script src="lib/vue-select@latest"></script> -->
