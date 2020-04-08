@@ -126,7 +126,7 @@
       </fieldset>
       <label>* = Pflichtfeld</label>
       <fieldset>
-        <button type="submit">Bestellung abschicken</button>
+        <button type="submit" v-bind:class="{ disabled: buttonIsDisabled() }" v-bind:disabled="buttonIsDisabled()">Bestellung abschicken</button>
       </fieldset>
     </form>
   </div>
@@ -250,11 +250,14 @@
           }
           let gesPfand = 0;
           for (let i of this.items) {
-            if (i.pfand !== null) {
+            if (i.pfand) {
               gesPfand = gesPfand + i.pfand * i.stueck;
             }
           }
           return currFormatter.format(gesPreis + gesPfand);
+        },
+        buttonIsDisabled: function() {
+          return this.items.length < 1;
         }
       },
       mounted: function() {

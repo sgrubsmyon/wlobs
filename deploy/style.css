@@ -155,7 +155,7 @@ input#collapsible {
 }
 
 .collapsible-content .content-inner {
-  background: rgba(250, 224, 66, .2);
+  background-color: rgba(250, 224, 66, .2);
   border-bottom: 1px solid rgba(250, 224, 66, .45);
   border-bottom-left-radius: 7px;
   border-bottom-right-radius: 7px;
@@ -319,7 +319,7 @@ button,
   text-align: center;
   padding: 1rem;
   color: #DDFED6;
-  background: #80ca2c;
+  background-color: #80ca2c;
   cursor: pointer;
   border-radius: 7px;
   border-width: 0;
@@ -330,16 +330,21 @@ button:hover {
   background-color: #1EB300;
 }
 
+button.disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
 button.square {
   width: 40px;
   height: 40px;
-  background: #ddd;
+  background-color: #ddd;
   color: dimgray;
   padding: 0;
 }
 
 button.square:hover {
-  background: #aaa;
+  background-color: #aaa;
 }
 
 button[type='submit'] {
