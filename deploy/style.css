@@ -65,7 +65,7 @@ body {
 h1 {
   font-family: 'Amatic SC', cursive;
   font-size: 4em;
-  margin-top: 60px;
+  margin-top: 30px;
   margin-bottom: 30px;
 }
 
@@ -82,6 +82,44 @@ h2 {
 
 strong {
   font-weight: bold;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+/* Logo */
+
+.back {
+  margin-top: 30px;
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+}
+
+h1 img {
+  width: 150px;
+  height: 150px;
+  vertical-align: middle;
+  margin-right: 20px;
+}
+
+@media (max-width: 768px) {
+  h1 img {
+    width: 75px;
+    height: 75px;
+    vertical-align: middle;
+    margin-right: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  h1 img {
+    display: none;
+  }
 }
 
 
