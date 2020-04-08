@@ -61,7 +61,7 @@
       </fieldset>
       <fieldset class="elem-group">
         <label for="address">Adresse</label>
-        <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}">
+        <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}" v-bind:required="lieferung_required">
       </fieldset>
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
       <fieldset class="elem-group">
@@ -116,7 +116,7 @@
           Vorgaben von Bund, Land und Stadt Bonn sowie Empfehlungen des Robert-Koch-Instituts, um weder
           mich noch die Mitarbeitenden des Weltladens noch andere Kund*innen zu gefährden.
         </label>
-        <input type="checkbox" id="lieferung" name="lieferung" value="lieferung_true">
+        <input type="checkbox" id="lieferung" name="lieferung" value="lieferung_true" v-model="lieferung_required">
         <label for="lieferung">
           Ich gehöre zu einer Risikogruppe, habe engen Kontakt mit Personen aus Riskogruppen oder
           befinde mich in Quarantäne, weshalb mir der Weg zum Weltladen unmöglich oder ein zu hohes
@@ -181,7 +181,8 @@
           vk_preis: 0,
           pfand: 0,
           stueck: 1
-        }]
+        }],
+        lieferung_required: false
       },
       methods: {
         addProduct: function() {
