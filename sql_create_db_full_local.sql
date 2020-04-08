@@ -5,6 +5,10 @@ DROP DATABASE IF EXISTS d;
 -- CREATE DATABASE d CHARACTER SET utf8 COLLATE utf8_general_ci; -- original like in Weltladenkasse
 CREATE DATABASE d DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci; -- adopted from https://framagit.org/framasoft/framadate/framadate/-/wikis/Install/Database
 
+-- War ein Griff ins Klo: (Umlaute gehen beim Einlesen kaputt, vielleicht weil
+-- Input aus UTF-8-DB ist? Oder vielleicht nur für Windows geeignet?)
+-- CREATE DATABASE d DEFAULT CHARACTER SET = latin1 COLLATE = latin1_german2_ci; -- modified framagit suggestion according to: https://dev.mysql.com/doc/refman/8.0/en/charset-collation-effect.html
+
 USE d;
 
 CREATE TABLE artikel (
@@ -67,3 +71,12 @@ LOAD DATA LOCAL INFILE 'artikel.txt' INTO TABLE artikel;
 
 -- DELETE FROM artikel;
 -- LOAD DATA LOCAL INFILE 'artikel.txt' INTO TABLE artikel;
+
+-- or:
+-- Create a table only dump containing drop table instruction:
+--
+-- mysqldump -umyuser -p mydb artikel -r artikel.sql
+--
+-- May need to add 'USE mydb;' statement in the beginning if phpmyadmin
+-- complains. Import the file with phpmyadmin into the DB.
+--

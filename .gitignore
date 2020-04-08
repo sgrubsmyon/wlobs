@@ -1,2 +1,4 @@
 deploy/vue.js
 .*.sw*
+*.sql
+*.txt

@@ -77,5 +77,5 @@ WHERE (
   a.artikel_nr = "S2348" OR
   a.artikel_nr = "sl9-30-001"
 ) AND a.aktiv = TRUE AND a.variabler_preis = FALSE
-ORDER BY lieferant_name, a.artikel_nr
+ORDER BY produktgruppe, REPLACE(a.artikel_name , "\"", "")
 INTO OUTFILE '/var/lib/mysql-files/artikel.txt';
