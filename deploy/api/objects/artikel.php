@@ -26,7 +26,7 @@ class Artikel {
         produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
         vk_preis, pfand, mwst_satz
       FROM " . $this->table_name . "
-      ORDER BY produktgruppen_name, lieferant_name, artikel_nr";
+      ORDER BY produktgruppen_name, REPLACE(artikel_name, \"\\\"\", \"\")";
 
     // prepare query statement
     $stmt = $this->conn->prepare($query);
@@ -58,7 +58,7 @@ class Artikel {
         vk_preis, pfand, mwst_satz
       FROM " . $this->table_name . "
       WHERE produktgruppen_name = ?
-      ORDER BY produktgruppen_name, lieferant_name, artikel_nr";
+      ORDER BY produktgruppen_name, REPLACE(artikel_name, \"\\\"\", \"\")";
 
     // prepare query statement
     $stmt = $this->conn->prepare($query);
