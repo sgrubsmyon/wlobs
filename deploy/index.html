@@ -65,30 +65,30 @@
       </fieldset>
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
       <fieldset class="elem-group">
-        <div v-for="item in items" id="product-selection">
-          <div>
+        <div v-for="item in items" class="product-selection">
+          <div class="produktgruppe">
             <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
             <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts(item.position)" required>
               <option value="" disabled selected>Bitte auswählen...</option>
               <option v-for="pg in productGroupList" v-bind:value="pg">{{ pg }}</option>
             </select>
           </div>
-          <div>
+          <div class="produkt">
             <label v-bind:for="'product'+item.position">Produkt</label>
             <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
               <option value="" disabled selected>Bitte auswählen...</option>
               <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
             </select>
           </div>
-          <div>
+          <div class="stueck">
             <label v-bind:for="'stueck'+item.position">Stück</label>
             <input type="number" v-bind:id="'stueck'+item.position" v-bind:name="'stueck'+item.position" min="1" max="1000" v-model="item.stueck">
           </div>
-          <div>
+          <div class="preis">
             <label v-bind:for="'preis'+item.position">Preis</label>
             <input type="text" v-bind:id="'preis'+item.position" v-bind:name="'preis'+item.position" v-bind:value="preis(item)" disabled>
           </div>
-          <button type="button" class="square" v-on:click="removeProduct(item.position)"><ion-icon name="trash-outline"></ion-icon></button>
+          <button type="button" class="muelltonne square" v-on:click="removeProduct(item.position)"><ion-icon name="trash-outline"></ion-icon></button>
         </div>
         <div class="ges-betrag">
           <label for="ges-betrag">Gesamtbetrag (evtl. inkl. Pfand):</label>

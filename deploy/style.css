@@ -217,26 +217,53 @@ fieldset {
   }
 }
 
-#product-selection {
+.product-selection {
   display: grid;
-  grid-template-columns: 20% 48% 8% 11% 5%;
+  grid-template-areas: "produktgruppe produkt stueck preis muelltonne";
+  grid-template-columns: 220px auto 60px 80px 40px;
   column-gap: 2%;
   margin-top: 20px;
   margin-bottom: 20px;
   width: 100%;
+  padding-bottom: 20px;
+  border-bottom: 2px solid lightgray;
 }
 
-
-/* @media (max-width: 1024px) {
-  grid-template-columns: 30% 48% 8% 8%;
-} */
-
-#product-selection input,
-#product-selection select {
-  font-size: 0.8em;
+.produktgruppe {
+  grid-area: produktgruppe;
 }
 
-#product-selection>button {
+.produkt {
+  grid-area: produkt;
+}
+
+.stueck {
+  grid-area: stueck;
+}
+
+.preis {
+  grid-area: preis;
+}
+
+.muelltonne {
+  grid-area: muelltonne;
+}
+
+@media (max-width: 960px) {
+  .product-selection {
+    grid-template-areas: "produktgruppe stueck preis muelltonne" "produkt produkt produkt produkt";
+    grid-template-columns: auto 60px 80px 40px;
+    row-gap: 10px;
+  }
+}
+
+.product-selection input,
+.product-selection select {
+  /* font-size: 0.8em; */
+  width: 100%;
+}
+
+.product-selection>button {
   align-self: end;
 }
 
@@ -245,7 +272,7 @@ fieldset {
 }
 
 
-/* #product-selection>tbody>tr>td {
+/* .product-selection>tbody>tr>td {
   width: 100%;
 } */
 
