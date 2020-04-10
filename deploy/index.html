@@ -75,10 +75,16 @@
           </div>
           <div class="produkt">
             <label v-bind:for="'product'+item.position">Produkt</label>
-            <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
-              <option value="" disabled selected>Bitte auswählen...</option>
-              <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
-            </select>
+            <div class="custom-select">
+              <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
+                <option value="" disabled selected>Bitte auswählen...</option>
+                <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
+              </select>
+              <div class="select-selected" v-on:click="item.showProdDropdown = !item.showProdDropdown">{{ item.artikel_name + ' (' + item.lieferant_name + ')' }}</div>
+              <div class="select-items" v-show="item.showProdDropdown">
+                <div v-for="p in item.products" v-on:click="item.id = p.lieferant_name+'______'+p.artikel_nr; updateItem(item)">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</div>
+              </div>
+            </div>
           </div>
           <div class="stueck">
             <label v-bind:for="'stueck'+item.position">Stück</label>
@@ -174,13 +180,14 @@
           position: 1,
           productgroup: "",
           products: [],
-          id: {
-            lieferant_name: "",
-            artikel_name: ""
-          },
+          id: "",
+          lieferant_name: "",
+          artikel_nr: "",
+          artikel_name: "",
           vk_preis: 0,
           pfand: 0,
-          stueck: 1
+          stueck: 1,
+          showProdDropdown: false
         }],
         lieferung_required: false
       },
@@ -194,13 +201,14 @@
             position: currPosition + 1,
             productgroup: "",
             products: [],
-            id: {
-              lieferant_name: "",
-              artikel_name: ""
-            },
+            id: "",
+            lieferant_name: "",
+            artikel_nr: "",
+            artikel_name: "",
             vk_preis: 0,
             pfand: 0,
-            stueck: 1
+            stueck: 1,
+            showProdDropdown: false
           });
         },
         removeProduct: function(position) {
@@ -231,6 +239,13 @@
             .then(prods => {
               item.products = prods;
               item.id = "";
+              item.lieferant_name = "";
+              item.artikel_nr = "";
+              item.artikel_name = "";
+              item.vk_preis = 0;
+              item.pfand = 0;
+              item.stueck = 1;
+              item.showProdDropdown = false;
             });
         },
         updateItem: function(item) {
@@ -238,6 +253,9 @@
             let id = item.id.split("______");
             return p.lieferant_name === id[0] && p.artikel_nr === id[1]
           })[0];
+          item.lieferant_name = prod.lieferant_name;
+          item.artikel_nr = prod.artikel_nr;
+          item.artikel_name = prod.artikel_name;
           item.vk_preis = prod.vk_preis;
           item.pfand = prod.pfand;
         },
@@ -269,6 +287,16 @@
             app.productGroupList = pgl;
           })
           .catch(error => console.log(error));
+      }
+    });
+
+    /* If the user clicks anywhere outside the select box: close select box(es): */
+    document.addEventListener("click", function(e) {
+      if (!e.target.classList.contains("select-selected")) {
+        // close all dropdowns:
+        for (let item of app.items) {
+          item.showProdDropdown = false;
+        }
       }
     });
   </script>
