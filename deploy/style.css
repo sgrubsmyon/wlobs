@@ -459,6 +459,12 @@ button[type='submit'] {
   grid-area: produktpfeil;
 }
 
+.lieferant,
+.preis {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
 
 /* Style the arrow inside the select element: */
 
@@ -496,17 +502,14 @@ button[type='submit'] {
   z-index: 99;
 }
 
-
-/* .same-as-selected { */
-
 .select-items div:hover {
   background-color: lightgray;
 }
 
-*/ .produktimg>img {
+.produktimg>img {
   width: 48px;
   height: 48px;
-  border: 1px solid lightgray;
+  border: 1px solid gray;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
