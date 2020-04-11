@@ -80,9 +80,23 @@
                 <option value="" disabled selected>Bitte auswählen...</option>
                 <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
               </select>
-              <div class="select-selected" v-on:click="item.showProdDropdown = !item.showProdDropdown">{{ item.artikel_name + ' (' + item.lieferant_name + ')' }}</div>
+              <div class="select-selected" @click="item.showProdDropdown = !item.showProdDropdown" :class="{ 'select-arrow-active': item.showProdDropdown, 'nothing-selected': item.id == '' }">
+                <div class="produktimg"><img :style="imageStyle(item)"></div>
+                <div class="produktname"><span>{{ item.artikel_name }}</span></div>
+                <div class="lieferant">{{ item.lieferant_name }}</div>
+                <div class="preis">{{ currFormatter.format(item.vk_preis) }}</div>
+                <div class="produktpfeil">
+                  <div></div>
+                </div>
+              </div>
               <div class="select-items" v-show="item.showProdDropdown">
-                <div v-for="p in item.products" v-on:click="item.id = p.lieferant_name+'______'+p.artikel_nr; updateItem(item)">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</div>
+                <div v-for="p in item.products" v-on:click="item.id = p.lieferant_name+'______'+p.artikel_nr; updateItem(item)">
+                  <div class="produktimg"><img :style="imageStyle(p)"></div>
+                  <div class="produktname"><span>{{ p.artikel_name }}</span></div>
+                  <div class="lieferant">{{ p.lieferant_name }}</div>
+                  <div class="preis">{{ currFormatter.format(p.vk_preis) }}</div>
+                  <div class="produktpfeil"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -277,6 +291,9 @@
         },
         buttonIsDisabled: function() {
           return this.items.length < 1;
+        },
+        imageStyle: function(prod) {
+          return "background-image: url('https://notfound.org/404.png');";
         }
       },
       mounted: function() {
@@ -292,7 +309,10 @@
 
     /* If the user clicks anywhere outside the select box: close select box(es): */
     document.addEventListener("click", function(e) {
-      if (!e.target.classList.contains("select-selected")) {
+      let cls = "select-selected";
+      if (!e.target.classList.contains(cls) &&
+        (!e.target.parentNode.classList || !e.target.parentNode.classList.contains(cls)) && // either parent node does not exist (<html>) or it does not have the class
+        (!e.target.parentNode.parentNode || !e.target.parentNode.parentNode.classList || !e.target.parentNode.parentNode.classList.contains(cls))) { // either parent node's parent node does not exist (<body>) or it does not have the class
         // close all dropdowns:
         for (let item of app.items) {
           item.showProdDropdown = false;

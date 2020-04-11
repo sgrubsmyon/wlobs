@@ -393,49 +393,96 @@ button[type='submit'] {
 
 .custom-select {
   position: relative;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1em;
 }
 
 .custom-select select {
-  display: none;
   /* hide original select element: */
-}
-
-.select-selected {
-  background-color: DodgerBlue;
-}
-
-
-/* Style the arrow inside the select element: */
-
-.select-selected:after {
-  position: absolute;
-  content: "";
-  top: 14px;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-  border-color: #fff transparent transparent transparent;
-}
-
-
-/* Point the arrow upwards when the select box is open (active): */
-
-.select-selected.select-arrow-active:after {
-  border-color: transparent transparent #fff transparent;
-  top: 7px;
+  display: none;
 }
 
 
 /* style the items (options), including the selected item: */
 
-.select-items div,
-.select-selected {
-  color: #ffffff;
-  padding: 8px 16px;
+.select-selected,
+.select-items>div {
+  display: grid;
+  align-items: center;
+  background-color: whitesmoke;
   border: 1px solid transparent;
   border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
   cursor: pointer;
+  height: 50px;
+  grid-template-areas: "produktimg produktname produktname produktpfeil" "produktimg lieferant preis produktpfeil";
+  grid-template-columns: 50px auto 70px 25px;
+  column-gap: 5px;
+  padding: 5px;
+}
+
+.select-selected.nothing-selected {
+  grid-template-areas: "produktname produktpfeil";
+  grid-template-columns: auto 25px;
+}
+
+.select-selected.nothing-selected>.produktname::after {
+  content: "Bitte auswählen...";
+  padding-left: 5px;
+}
+
+.select-selected.nothing-selected>.produktimg,
+.select-selected.nothing-selected>.lieferant,
+.select-selected.nothing-selected>.preis {
+  display: none;
+}
+
+.produktimg {
+  grid-area: produktimg;
+}
+
+.produktname {
+  grid-area: produktname;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lieferant {
+  grid-area: lieferant;
+}
+
+.preis {
+  grid-area: preis;
+  justify-self: end;
+}
+
+.produktpfeil {
+  grid-area: produktpfeil;
+}
+
+
+/* Style the arrow inside the select element: */
+
+.produktpfeil {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+}
+
+.produktpfeil>div {
+  content: ' ';
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid currentColor;
+  transition: transform .2s ease-out;
+}
+
+
+/* Point the arrow upwards when the select box is open (active): */
+
+.select-selected.select-arrow-active>.produktpfeil>div {
+  transform: rotate(180deg);
 }
 
 
@@ -443,14 +490,24 @@ button[type='submit'] {
 
 .select-items {
   position: absolute;
-  background-color: DodgerBlue;
   top: 100%;
   left: 0;
   right: 0;
   z-index: 99;
 }
 
-.select-items div:hover,
-.same-as-selected {
-  background-color: rgba(0, 0, 0, 0.1);
+
+/* .same-as-selected { */
+
+.select-items div:hover {
+  background-color: lightgray;
+}
+
+*/ .produktimg>img {
+  width: 48px;
+  height: 48px;
+  border: 1px solid lightgray;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
