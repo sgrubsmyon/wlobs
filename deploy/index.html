@@ -82,7 +82,9 @@
               </select>
               <div class="select-selected" @click="item.showProdDropdown = !item.showProdDropdown" :class="{ 'select-arrow-active': item.showProdDropdown, 'nothing-selected': item.id == '' }">
                 <div class="produktimg"><img :style="imageStyle(item)"></div>
-                <div class="produktname"><span>{{ item.artikel_name }}</span></div>
+                <div class="produktname">
+                  <div :title="item.artikel_name">{{ item.artikel_name }}</div>
+                </div>
                 <div class="lieferant">{{ item.lieferant_name }}</div>
                 <div class="preis">{{ currFormatter.format(item.vk_preis) }}</div>
                 <div class="produktpfeil">
@@ -92,7 +94,9 @@
               <div class="select-items" v-show="item.showProdDropdown">
                 <div v-for="p in item.products" v-on:click="item.id = p.lieferant_name+'______'+p.artikel_nr; updateItem(item)">
                   <div class="produktimg"><img :style="imageStyle(p)"></div>
-                  <div class="produktname"><span>{{ p.artikel_name }}</span></div>
+                  <div class="produktname">
+                    <div :title="p.artikel_name">{{ p.artikel_name }}</div>
+                  </div>
                   <div class="lieferant">{{ p.lieferant_name }}</div>
                   <div class="preis">{{ currFormatter.format(p.vk_preis) }}</div>
                   <div class="produktpfeil"></div>

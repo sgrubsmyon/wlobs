@@ -219,6 +219,7 @@ fieldset {
 
 .product-selection {
   display: grid;
+  align-items: center;
   grid-template-areas: "produktgruppe produkt stueck preis muelltonne";
   grid-template-columns: 220px auto 60px 80px 40px;
   column-gap: 2%;
@@ -261,10 +262,6 @@ fieldset {
 .product-selection select {
   /* font-size: 0.8em; */
   width: 100%;
-}
-
-.product-selection>button {
-  align-self: end;
 }
 
 .add-prod-button {
@@ -414,6 +411,7 @@ button[type='submit'] {
   border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
   cursor: pointer;
   height: 50px;
+  max-width: 100%;
   grid-template-areas: "produktimg produktname produktname produktpfeil" "produktimg lieferant preis produktpfeil";
   grid-template-columns: 50px auto 70px 25px;
   column-gap: 5px;
@@ -425,7 +423,7 @@ button[type='submit'] {
   grid-template-columns: auto 25px;
 }
 
-.select-selected.nothing-selected>.produktname::after {
+.select-selected.nothing-selected>.produktname>div::after {
   content: "Bitte auswählen...";
   padding-left: 5px;
 }
@@ -442,7 +440,16 @@ button[type='submit'] {
 
 .produktname {
   grid-area: produktname;
+  /* https://stackoverflow.com/questions/16125463/how-can-i-make-a-fluid-width-header-with-text-overflow-ellipsis-without-wrapping */
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+}
+
+.produktname>div {
+  display: table-cell;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
 
@@ -500,6 +507,8 @@ button[type='submit'] {
   left: 0;
   right: 0;
   z-index: 99;
+  max-height: 500px;
+  overflow: auto;
 }
 
 .select-items div:hover {
