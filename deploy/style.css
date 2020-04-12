@@ -405,22 +405,27 @@ button[type='submit'] {
 .select-selected,
 .select-items>div {
   display: grid;
-  align-items: center;
+  align-items: start;
   background-color: whitesmoke;
   border: 1px solid transparent;
   border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
   cursor: pointer;
-  height: 50px;
+  height: 100px;
   max-width: 100%;
   grid-template-areas: "produktimg produktname produktname produktpfeil" "produktimg lieferant preis produktpfeil";
-  grid-template-columns: 50px auto 70px 25px;
+  grid-template-columns: 100px auto 70px 25px;
   column-gap: 5px;
+  row-gap: 10px;
   padding: 5px;
 }
 
 .select-selected.nothing-selected {
   grid-template-areas: "produktname produktpfeil";
   grid-template-columns: auto 25px;
+}
+
+.select-selected.nothing-selected>.produktname {
+  align-self: center;
 }
 
 .select-selected.nothing-selected>.produktname>div::after {
@@ -444,13 +449,20 @@ button[type='submit'] {
   width: 100%;
   display: table;
   table-layout: fixed;
+  align-self: end;
 }
 
 .produktname>div {
   display: table-cell;
   overflow: hidden;
-  white-space: nowrap;
+  /* only for single line ellipsis: */
+  /* white-space: nowrap; */
   text-overflow: ellipsis;
+  /* https://stackoverflow.com/questions/3922739/limit-text-length-to-n-lines-using-css */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  /* number of lines to show */
+  -webkit-box-orient: vertical;
 }
 
 .lieferant {
@@ -464,6 +476,7 @@ button[type='submit'] {
 
 .produktpfeil {
   grid-area: produktpfeil;
+  align-self: center;
 }
 
 .lieferant,
@@ -515,11 +528,11 @@ button[type='submit'] {
   background-color: lightgray;
 }
 
-.produktimg>img {
-  width: 48px;
-  height: 48px;
-  border: 1px solid gray;
-  background-size: contain;
+.produktimg>a>img {
+  width: 98px;
+  height: 98px;
+  /* border: 1px solid gray; */
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }

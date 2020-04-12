@@ -81,7 +81,12 @@
                 <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
               </select>
               <div class="select-selected" @click="item.showProdDropdown = !item.showProdDropdown" :class="{ 'select-arrow-active': item.showProdDropdown, 'nothing-selected': item.id == '' }">
-                <div class="produktimg"><img :style="imageStyle(item)"></div>
+                <div v-if="prodURL(item) != ''" class="produktimg" title="Klicken für mehr Infos">
+                  <a target="_blank" rel="noopener noreferrer" :href="prodURL(item)"><img :style="imageStyle(item)"></a>
+                </div>
+                <div v-else class="produktimg">
+                  <img :style="imageStyle(item)">
+                </div>
                 <div class="produktname">
                   <div :title="item.artikel_name">{{ item.artikel_name }}</div>
                 </div>
@@ -93,7 +98,12 @@
               </div>
               <div class="select-items" v-show="item.showProdDropdown">
                 <div v-for="p in item.products" v-on:click="item.id = p.lieferant_name+'______'+p.artikel_nr; updateItem(item)">
-                  <div class="produktimg"><img :style="imageStyle(p)"></div>
+                  <div v-if="prodURL(p) != ''" class="produktimg" title="Klicken für mehr Infos">
+                    <a target="_blank" rel="noopener noreferrer" :href="prodURL(p)"><img :style="imageStyle(p)"></a>
+                  </div>
+                  <div v-else class="produktimg">
+                    <img :style="imageStyle(p)">
+                  </div>
                   <div class="produktname">
                     <div :title="p.artikel_name">{{ p.artikel_name }}</div>
                   </div>
@@ -297,7 +307,39 @@
           return this.items.length < 1;
         },
         imageStyle: function(prod) {
-          return "background-image: url('https://notfound.org/404.png');";
+          let art_nr_alphanum = prod.artikel_nr.replace(/[^\w]/g, "").toLowerCase(); // only keep a-z and 0-9
+          switch (prod.lieferant_name) {
+            case 'El Puente':
+              let a = prod.artikel_nr[0].toLowerCase(); // 1st character
+              let b = prod.artikel_nr[1].toLowerCase(); // 2nd character
+              // don't use this: sometimes cache is empty:
+              return "background-image: url('https://shop.el-puente.de/media/catalog/product/cache/image/700x700/e9c3970ab036de70892d86c6d221abfe/" + a + "/" + b + "/" + art_nr_alphanum + ".jpg');";
+              // but also here, sometimes cache is empty, and the above is at least generated when product page is visited (by clicking on image):
+              // return "background-image: url('https://shop.el-puente.de/media/catalog/product/cache/thumbnail/130x160/beff4985b56e3afdbeabfc89641a4582/" + a + "/" + b + "/" + art_nr_alphanum + ".jpg');";
+              break;
+            case 'WeltPartner':
+              return "background-image: url('https://shop.weltpartner.de/images/stories/virtuemart/product/resized/" + prod.artikel_nr.toLowerCase() + "_380x380.jpg');";
+            case 'GEPA':
+              return "background-image: url('https://www.gepa-wug.de/wug/bilder/inhalt/food/normal/" + art_nr_alphanum + ".jpg');";
+            default:
+              return "background-image: url('');";
+              break;
+          }
+        },
+        prodURL: function(prod) {
+          switch (prod.lieferant_name) {
+            case 'El Puente':
+              return 'https://shop.el-puente.de/' + prod.artikel_nr.toLowerCase();
+              break;
+            case 'WeltPartner':
+              return 'https://shop.weltpartner.de/suche?keyword=' + prod.artikel_nr;
+            case 'GEPA':
+              let art_nr_alphanum = prod.artikel_nr.replace(/[^\w]/g, "").toLowerCase(); // only keep a-z and 0-9
+              return 'https://www.gepa-wug.de/wug/media/produktpass/' + art_nr_alphanum + '.pdf';
+            default:
+              return '';
+              break;
+          }
         }
       },
       mounted: function() {
