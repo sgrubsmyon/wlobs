@@ -82,10 +82,12 @@
               </select>
               <div class="select-selected" @click="item.showProdDropdown = !item.showProdDropdown" :class="{ 'select-arrow-active': item.showProdDropdown, 'nothing-selected': item.id == '' }">
                 <div v-if="prodURL(item) != ''" class="produktimg" title="Klicken für mehr Infos">
-                  <a target="_blank" rel="noopener noreferrer" :href="prodURL(item)"><img :style="imageStyle(item)"></a>
+                  <a target="_blank" rel="noopener noreferrer" :href="prodURL(item)">
+                    <div :style="imageStyle(item)"></div>
+                  </a>
                 </div>
                 <div v-else class="produktimg">
-                  <img :style="imageStyle(item)">
+                  <div :style="imageStyle(item)"></div>
                 </div>
                 <div class="produktname">
                   <div :title="item.artikel_name">{{ item.artikel_name }}</div>
@@ -99,17 +101,18 @@
               <div class="select-items" v-show="item.showProdDropdown">
                 <div v-for="p in item.products" v-on:click="item.id = p.lieferant_name+'______'+p.artikel_nr; updateItem(item)">
                   <div v-if="prodURL(p) != ''" class="produktimg" title="Klicken für mehr Infos">
-                    <a target="_blank" rel="noopener noreferrer" :href="prodURL(p)"><img :style="imageStyle(p)"></a>
+                    <a target="_blank" rel="noopener noreferrer" :href="prodURL(p)">
+                      <div :style="imageStyle(p)"></div>
+                    </a>
                   </div>
                   <div v-else class="produktimg">
-                    <img :style="imageStyle(p)">
+                    <div :style="imageStyle(p)"></div>
                   </div>
                   <div class="produktname">
                     <div :title="p.artikel_name">{{ p.artikel_name }}</div>
                   </div>
                   <div class="lieferant">{{ p.lieferant_name }}</div>
                   <div class="preis">{{ currFormatter.format(p.vk_preis) }}</div>
-                  <div class="produktpfeil"></div>
                 </div>
               </div>
             </div>
@@ -132,7 +135,7 @@
       </fieldset>
       <fieldset class="elem-group">
         <label for="message">Ich habe Interesse an folgenden weiteren Produkten oder folgende Fragen, bitte senden Sie mir dazu Informationen zu:</label>
-        <textarea id="message" name="visitor_message" placeholder="Hier kannst du z.B. weitere Produkte erwähnen, die wir dazu packen sollen."></textarea>
+        <textarea id="message" name="visitor_message" placeholder="Hier können Sie z.B. weitere Produkte erwähnen, die wir dazu packen sollen."></textarea>
       </fieldset>
       <fieldset class="elem-group checkboxes">
         <input type="checkbox" id="datenschutz" name="datenschutz" value="datenschutz_true" required>

@@ -402,21 +402,43 @@ button[type='submit'] {
 
 /* style the items (options), including the selected item: */
 
+
+/* what should be generally same for selection and dropdown: */
+
 .select-selected,
 .select-items>div {
   display: grid;
   align-items: start;
-  background-color: whitesmoke;
-  border: 1px solid transparent;
-  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  /* same border-color as std. select/input in Ubuntu Firefox: */
+  border: 1px solid #ccc;
+  /* same border-radius as std. select/input in Ubuntu Firefox: */
+  border-radius: 3px;
   cursor: pointer;
   height: 100px;
   max-width: 100%;
-  grid-template-areas: "produktimg produktname produktname produktpfeil" "produktimg lieferant preis produktpfeil";
-  grid-template-columns: 100px auto 70px 25px;
   column-gap: 5px;
   row-gap: 10px;
   padding: 5px;
+}
+
+
+/* things different in selection: */
+
+.select-selected {
+  /* same background-color as std. select/input in Ubuntu Firefox: */
+  background-color: #f2f1f0;
+  grid-template-areas: "produktimg produktname produktname produktpfeil" "produktimg lieferant preis produktpfeil";
+  grid-template-columns: 100px auto 70px 25px;
+}
+
+
+/* things different in dropdown: */
+
+.select-items>div {
+  /* lighter background-color to make it distinguishable from selection: */
+  background-color: lemonchiffon;
+  grid-template-areas: "produktimg produktname produktname" "produktimg lieferant preis";
+  grid-template-columns: 100px auto 70px;
 }
 
 .select-selected.nothing-selected {
@@ -522,13 +544,15 @@ button[type='submit'] {
   z-index: 99;
   max-height: 500px;
   overflow: auto;
+  border: 1px solid dimgray;
 }
 
 .select-items div:hover {
-  background-color: lightgray;
+  /* background-color: lightgray; */
+  background-color: lightblue;
 }
 
-.produktimg>a>img {
+.produktimg>a>div {
   width: 98px;
   height: 98px;
   /* border: 1px solid gray; */
