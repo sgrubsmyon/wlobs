@@ -219,7 +219,7 @@ fieldset {
 
 .product-selection {
   display: grid;
-  align-items: center;
+  align-items: start;
   grid-template-areas: "produktgruppe produkt stueck preis muelltonne";
   grid-template-columns: 220px auto 60px 80px 40px;
   column-gap: 2%;
@@ -248,6 +248,7 @@ fieldset {
 
 .muelltonne {
   grid-area: muelltonne;
+  margin-top: 20px;
 }
 
 @media (max-width: 960px) {
@@ -436,7 +437,7 @@ button[type='submit'] {
 
 .select-items>div {
   /* lighter background-color to make it distinguishable from selection: */
-  background-color: lemonchiffon;
+  background-color: aliceblue;
   grid-template-areas: "produktimg produktname produktname" "produktimg lieferant preis";
   grid-template-columns: 100px auto 70px;
 }
