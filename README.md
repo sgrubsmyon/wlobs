@@ -6,14 +6,30 @@
 
 ```
 sudo rm /var/lib/mysql-files/artikel.txt
-mysql -hlocalhost -uroot -p -e "source sql_export.sql"
+mysql -hlocalhost -uroot -p -e "source sql/exports/export_XXX.sql"
 sudo cp -i /var/lib/mysql-files/artikel.txt .
 ```
 
 ### Import data into new DB for wlobs
 
 ```
-mysql -hlocalhost -uroot -p -e "source sql_create_db_full_local.sql"
+mysql -hlocalhost -uroot -p -e "source sql/create_db_full_local.sql"
+```
+
+## Update of article DB in running system
+
+### Export data from Weltladenkasse DB `kasse`
+
+```
+sudo rm /var/lib/mysql-files/artikel.txt
+mysql -hlocalhost -uroot -p -e "source sql/exports/export_XXX.sql"
+sudo cp -i /var/lib/mysql-files/artikel.txt .
+```
+
+### Update wlobs DB with new data
+
+```
+mysql -hlocalhost -uroot -p -e "source sql/update_article_table.sql"
 ```
 
 ## Deploy locally for testing
@@ -21,3 +37,4 @@ mysql -hlocalhost -uroot -p -e "source sql_create_db_full_local.sql"
 ```
 sudo rsync -rtlPvin --delete --exclude=.*.sw* deploy/* /var/www/html/wlobs/; sudo chown -R www-data:www-data /var/www/html/wlobs/
 ```
+
