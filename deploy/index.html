@@ -22,7 +22,10 @@
       <a href="https://www.weltladen-bonn.org"><img src="logo-weltladen_cmyk.svg" alt="Logo Weltladen Bonn e.V."></a>
       <div>Weltladen Bonn Bestellformular</div>
     </h1>
-    <h2>Leider können wir aktuell nicht regulär für Sie öffnen, gerne sind wir jedoch auf diese Weise für Sie da.</h2>
+    <h2>Wir haben wieder regulär geöffnet, dieses Bestellformular steht Ihnen jedoch weiterhin zur Verfügung.</h2>
+    <p>Wir erwarten in der Vorweihnachtszeit längere Wartezeiten beim Einkauf direkt im Laden aufgrund der
+      Beschränkung auf maximal 4 Kund*innen im Laden, daher hilft es Ihnen und uns, wenn Sie vorbestellen
+      und nur zum Abholen vorbeikommen.</p>
     <!-- Collapsible: https://alligator.io/css/collapsible/ -->
     <div class="wrap-collabsible">
       <input id="collapsible" class="toggle" type="checkbox">
@@ -32,15 +35,36 @@
           <p>
             <ol>
               <li>Geben Sie Ihre Kontaktdaten an, wir benötigen sie zur Abwicklung der Bestellung (und nur dafür).</li>
-              <li>Wählen Sie zuerst eine Produktgruppe aus und dann im Feld rechts davon eines der Produkte. Danach können Sie daneben die Stückzahl eingeben, ganz rechts erscheint der Gesamtpreis für dieses Produkt.</li>
-              <li>Über den Button (+ Produkt hinzufügen) fügen Sie Produkte hinzu, über das Mülltonnensymbol <span>(<ion-icon name="trash-outline" style="vertical-align: middle;"></ion-icon>)</span> können Sie sie löschen. Es gibt keine erforderliche Mindestbestellmenge
+              <li>Sie können Lebensmittel (oben) und Handwerksartikel (unten) über zwei Auswahlbereiche hinzufügen:
+                Wählen Sie zuerst eine Produktgruppe aus und dann im Feld rechts davon eines der Produkte. Danach können Sie daneben die Stückzahl eingeben, ganz rechts erscheint der Gesamtpreis für dieses Produkt.</li>
+              <li>Über den Button (+ Lebensmittel hinzufügen/Handwerk hinzufügen) fügen Sie Produkte hinzu, über das Mülltonnensymbol <span>(<ion-icon name="trash-outline" style="vertical-align: middle;"></ion-icon>)</span> können Sie sie löschen. Es gibt keine erforderliche Mindestbestellmenge
                 pro Produkt.</li>
-              <li>Wenn Sie etwas bestellen möchten, das Sie nicht in der Produktauswahl finden, können Sie im Freitextfeld unter dem Gesamtpreis hinzufügen.</li>
+              <li>Wenn Sie etwas bestellen möchten, das Sie nicht in der Produktauswahl finden, können Sie es im Freitextfeld unter dem Gesamtpreis hinzufügen.
+                Sie können dafür auch auf die Webseiten unserer Lieferanten schauen (s.u.) – was dort bestellbar ist, können auch wir Ihnen anbieten.
+              </li>
               <li>Nach dem Klick auf „Absenden und Bestellen“ erhalten Sie die Übersicht Ihrer Bestellung per E-Mail zugeschickt.</li>
               <li>Wir melden uns anschließend bei Ihnen, um Ihnen das nächste mögliche Abholdatum zu nennen, außerdem um ggf. offene Fragen zu klären. Falls der Termin nicht passt, finden wir eine passende Alternative. <strong>Wichtig: bitte bestätigen Sie den Abholtermin, damit die Ware für Sie gepackt wird.</strong></li>
               <li>Kommen Sie zum vereinbarten Termin zum Laden und holen Sie Ihre Bestellung ab. Bitte halten Sie dabei die empfohlenen Hygieneempfehlungen ein, insbesondere den Abstand.</li>
               <li>Freuen Sie sich über leckere Produkte aus Fairem Handel. Sie unterstützen damit sowohl die lokalen Strukturen des Fairen Handels als auch die Fairhandelskooperativen und Kleinproduzent*innen weltweit!</li>
             </ol>
+          </p>
+          <p>
+            Hier kommen Sie zu den Webseiten unserer Lieferanten, wenn Sie nach weiteren Produkten schauen möchten:
+            <ul>
+              <li>El Puente: <a href="https://shop.el-puente.de/">https://shop.el-puente.de/</a></li>
+              <li>Ethiquable: <a href="https://www.ethiquable-shop.de/">https://www.ethiquable-shop.de/</a></li>
+              <li>Fairtrade Center Breisgau: <a href="https://www.fairtradecenter.info/">https://www.fairtradecenter.info/</a></li>
+              <li>Frida Feeling: <a href="https://www.fridafeeling.de/">https://www.fridafeeling.de/</a></li>
+              <li>mafiafreie Produkte aus Italien: <a href="https://www.legalundlecker.de/">https://www.legalundlecker.de/</a></li>
+              <li>GEPA: <a href="https://www.gepa-shop.de/">https://www.gepa-shop.de/</a></li>
+              <li>GLOBO: <a href="https://www.globo-fairtrade.com/">https://www.globo-fairtrade.com/</a></li>
+              <li>Putumayo: <a href="https://www.putumayo.com/">https://www.putumayo.com/</a></li>
+              <li>WeltPartner (ehem. dwp): <a href="https://shop.weltpartner.de/">https://shop.weltpartner.de/</a></li>
+            </ul>
+          </p>
+          <p>
+            Bitte beachten Sie: Sollte ein Produkt nur in größeren Mengen (v.a. Lebensmittel) oder zu einem abweichenden Preis bestellbar sein, werden wir Sie vor der finalen Bestellung um Bestätigung bitten.
+            Nicht vorrätige Ware braucht 1-2 Wochen, bis sie im Laden ist und abgeholt werden kann.
           </p>
         </div>
       </div>
@@ -64,6 +88,7 @@
         <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}" v-bind:required="lieferung_required">
       </fieldset>
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
+      <h3>1. Lebensmittel</h3>
       <fieldset class="elem-group">
         <div v-for="item in items" class="product-selection">
           <div class="produktgruppe">
@@ -127,14 +152,32 @@
           </div>
           <button type="button" class="muelltonne square" v-on:click="removeProduct(item.position)"><ion-icon name="trash-outline"></ion-icon></button>
         </div>
+        <button class="add-prod-button" type="button" v-on:click="addProduct">+ Lebensmittel hinzufügen</button>
+        <div class="ges-betrag">
+          <label for="teil-betrag-lm">Teilbetrag Lebensmittel (evtl. inkl. Pfand):</label>
+          <input type="text" id="teil-betrag-lm" v-bind:value="gesBetrag()" disabled>
+        </div>
+      </fieldset>
+      <h3>2. Handwerk</h3>
+      <fieldset class="elem-group">
+        <button class="add-prod-button" type="button" v-on:click="addProduct">+ Handwerk hinzufügen</button>
+        <div class="ges-betrag">
+          <label for="teil-betrag-khw">Teilbetrag Handwerk:</label>
+          <input type="text" id="teil-betrag-khw" v-bind:value="gesBetrag()" disabled>
+        </div>
+      </fieldset>
+      <fieldset class="elem-group">
         <div class="ges-betrag">
           <label for="ges-betrag">Gesamtbetrag (evtl. inkl. Pfand):</label>
           <input type="text" id="ges-betrag" v-bind:value="gesBetrag()" disabled>
         </div>
-        <button class="add-prod-button" type="button" v-on:click="addProduct">+ Produkt hinzufügen</button>
       </fieldset>
       <fieldset class="elem-group">
-        <label for="message">Ich habe Interesse an folgenden weiteren Produkten oder folgende Fragen, bitte senden Sie mir dazu Informationen zu:</label>
+        <label for="message">
+          Ich habe Interesse an folgenden weiteren Produkten oder folgende Fragen,
+          bitte senden Sie mir dazu Informationen zu: (Links zu den Webseiten der Lieferanten:
+          siehe „So geht's“ oben auf der Seite)
+        </label>
         <textarea id="message" name="visitor_message" placeholder="Hier können Sie z.B. weitere Produkte erwähnen, die wir dazu packen sollen."></textarea>
       </fieldset>
       <fieldset class="elem-group checkboxes">
