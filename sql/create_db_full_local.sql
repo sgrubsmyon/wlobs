@@ -11,7 +11,7 @@ CREATE DATABASE d DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci; 
 
 USE d;
 
-CREATE TABLE artikel (
+CREATE TABLE artikel_lm (
     lieferant_name VARCHAR(50) NOT NULL,
     artikel_nr VARCHAR(30) NOT NULL,
     artikel_name VARCHAR(180) NOT NULL,
@@ -19,9 +19,21 @@ CREATE TABLE artikel (
     vk_preis DECIMAL(13,2) NOT NULL,
     pfand DECIMAL(13,2) DEFAULT NULL,
     mwst_satz DECIMAL(6,5) NOT NULL,
-    PRIMARY KEY (lieferant_name, artikel_nr)
+    PRIMARY KEY (lieferant_name, artikel_nr),
+    INDEX (artikel_nr, artikel_name) -- allow quick search in both artikel_nr and artikel_name
 );
 -- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE artikel_khw (
+    lieferant_name VARCHAR(50) NOT NULL,
+    artikel_nr VARCHAR(30) NOT NULL,
+    artikel_name VARCHAR(180) NOT NULL,
+    produktgruppen_name VARCHAR(50) NOT NULL,
+    vk_preis DECIMAL(13,2) NOT NULL,
+    mwst_satz DECIMAL(6,5) NOT NULL,
+    PRIMARY KEY (lieferant_name, artikel_nr),
+    INDEX (artikel_nr, artikel_name) -- allow quick search in both artikel_nr and artikel_name
+);
 
 CREATE TABLE bestellung (
     bestell_nr INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT,

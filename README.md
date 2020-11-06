@@ -8,7 +8,8 @@
 
 ```
 sudo mysql -e "source sql/exports/export_XXX.sql"
-sudo mv -i /var/lib/mysql/kasse/artikel.txt .
+sudo mv -i /var/lib/mysql/kasse/artikel_lm.txt .
+sudo mv -i /var/lib/mysql/kasse/artikel_khw.txt .
 ```
 
 #### Import data into new DB for wlobs on Arch Linux/Manjaro
@@ -23,7 +24,8 @@ sudo mysql -e "source sql/create_db_full_local.sql"
 
 ```
 sudo mysql -e "source sql/exports/export_XXX.sql"
-sudo mv -i /var/lib/mysql/kasse/artikel.txt .
+sudo mv -i /var/lib/mysql/kasse/artikel_lm.txt .
+sudo mv -i /var/lib/mysql/kasse/artikel_khw.txt .
 ```
 
 #### Update wlobs DB with new data
@@ -40,7 +42,8 @@ sudo mysql -e "source sql/update_article_table.sql"
 
 ```
 mysql -hlocalhost -uroot -p -e "source sql/exports/export_XXX.sql"
-sudo mv -i /var/lib/mysql-files/artikel.txt .
+sudo mv -i /var/lib/mysql-files/artikel_lm.txt .
+sudo mv -i /var/lib/mysql-files/artikel_khw.txt .
 ```
 
 #### Outdated: Import data into new DB for wlobs on Ubuntu 16.04
@@ -54,9 +57,11 @@ mysql -hlocalhost -uroot -p -e "source sql/create_db_full_local.sql"
 #### Outdated: Export data from Weltladenkasse DB `kasse`
 
 ```
-sudo rm /var/lib/mysql-files/artikel.txt
+sudo rm /var/lib/mysql-files/artikel_lm.txt
+sudo rm /var/lib/mysql-files/artikel_khw.txt
 mysql -hlocalhost -uroot -p -e "source sql/exports/export_XXX.sql"
-sudo cp -i /var/lib/mysql-files/artikel.txt .
+sudo cp -i /var/lib/mysql-files/artikel_lm.txt .
+sudo cp -i /var/lib/mysql-files/artikel_khw.txt .
 ```
 
 #### Outdated: Update wlobs DB with new data
