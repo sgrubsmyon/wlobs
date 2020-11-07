@@ -1,7 +1,7 @@
 USE kasse;
 
 SELECT DISTINCT
-  lieferant_name, a.artikel_nr, a.artikel_name,
+  "LM", lieferant_name, a.artikel_nr, a.artikel_name,
   (CASE
     WHEN (p.toplevel_id = 2 AND p.sub_id = 17 AND p.subsub_id = 3) THEN "Weihnachten"
     WHEN (p.toplevel_id = 3 AND p.sub_id = 2) THEN "Getränke mit Alkohol"
@@ -36,18 +36,20 @@ ORDER BY produktgruppe, REPLACE(a.artikel_name , "\"", "")
 INTO OUTFILE 'artikel_lm.txt';
 
 SELECT DISTINCT
-  lieferant_name, a.artikel_nr, a.artikel_name,
+  "KHW", lieferant_name, a.artikel_nr, a.artikel_name,
   (CASE
     WHEN (p.toplevel_id = 4 AND p.sub_id = 16 AND p.subsub_id = 2) THEN "Weihnachten"
     -- Take default product group name from sub-level:
     WHEN (p.sub_id IS NOT NULL) THEN (SELECT produktgruppen_name FROM produktgruppe WHERE toplevel_id = p.toplevel_id AND sub_id = p.sub_id AND ISNULL(subsub_id))
     ELSE produktgruppen_name
   END) AS produktgruppe,
-  a.vk_preis, mwst.mwst_satz
+  a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz
 FROM artikel AS a
 INNER JOIN lieferant USING (lieferant_id)
 INNER JOIN produktgruppe AS p USING (produktgruppen_id)
 INNER JOIN mwst USING (mwst_id)
+LEFT JOIN pfand USING (pfand_id)
+LEFT JOIN artikel AS pfandartikel ON pfand.artikel_id = pfandartikel.artikel_id
 WHERE
   -- Kunsthandwerk und Ergänzungsprodukte:
     -- Select all articles active and in sortiment:
