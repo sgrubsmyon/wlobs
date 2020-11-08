@@ -90,12 +90,12 @@
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
       <h3>1. Lebensmittel</h3>
       <fieldset class="elem-group">
-        <div v-for="item in items" class="product-selection">
+        <div v-for="item in items.LM" class="product-selection">
           <div class="produktgruppe">
             <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
-            <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts(item.position)" required>
+            <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts('LM', item.position)" required>
               <option value="" disabled selected>Bitte auswählen...</option>
-              <option v-for="pg in productGroupList" v-bind:value="pg">{{ pg }}</option>
+              <option v-for="pg in productGroupListLM" v-bind:value="pg">{{ pg }}</option>
             </select>
           </div>
           <div class="produkt">
@@ -150,17 +150,27 @@
             <label v-bind:for="'preis'+item.position">Preis</label>
             <input type="text" v-bind:id="'preis'+item.position" v-bind:name="'preis'+item.position" v-bind:value="preis(item)" disabled>
           </div>
-          <button type="button" class="muelltonne square" v-on:click="removeProduct(item.position)"><ion-icon name="trash-outline"></ion-icon></button>
+          <button type="button" class="muelltonne square" v-on:click="removeProduct('LM', item.position)"><ion-icon name="trash-outline"></ion-icon></button>
         </div>
-        <button class="add-prod-button" type="button" v-on:click="addProduct">+ Lebensmittel hinzufügen</button>
+        <button class="add-prod-button" type="button" v-on:click="addProduct('LM')">+ Lebensmittel hinzufügen</button>
         <div class="ges-betrag">
           <label for="teil-betrag-lm">Teilbetrag Lebensmittel (evtl. inkl. Pfand):</label>
           <input type="text" id="teil-betrag-lm" v-bind:value="gesBetrag()" disabled>
         </div>
       </fieldset>
+
       <h3>2. Handwerk</h3>
       <fieldset class="elem-group">
-        <button class="add-prod-button" type="button" v-on:click="addProduct">+ Handwerk hinzufügen</button>
+        <div v-for="item in items.KHW" class="product-selection">
+          <div class="produktgruppe">
+            <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
+            <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts('KHW', item.position)" required>
+              <option value="" disabled selected>Bitte auswählen...</option>
+              <option v-for="pg in productGroupListKHW" v-bind:value="pg">{{ pg }}</option>
+            </select>
+          </div>
+        </div>
+        <button class="add-prod-button" type="button" v-on:click="addProduct('KHW')">+ Handwerk hinzufügen</button>
         <div class="ges-betrag">
           <label for="teil-betrag-khw">Teilbetrag Handwerk:</label>
           <input type="text" id="teil-betrag-khw" v-bind:value="gesBetrag()" disabled>
@@ -211,9 +221,9 @@
     </form>
   </div>
   <!-- <script src="https://vuejs.org/js/vue.js"></script> (Development version) -->
-  <!-- <script src="lib/vue.js"></script> -->
+  <script src="lib/vue.js"></script>
   <!-- <script src="https://vuejs.org/js/vue.min.js"></script> (Production version) -->
-  <script src="lib/vue.min.js"></script>
+  <!-- <script src="lib/vue.min.js"></script> -->
   <!-- <script src="https://unpkg.com/vue-select@latest"></script>
   <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css"> -->
   <!-- <script src="lib/vue-select@latest"></script> -->
@@ -238,60 +248,56 @@
       });
     }
 
-    let currFormatter = Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR'
-    });
-
     // Vue.component('v-select', VueSelect.VueSelect);
 
     Vue.config.ignoredElements = [/^ion-/];
+    let itemPrototype = {
+      position: 1,
+      productgroup: "",
+      products: [],
+      id: "",
+      lieferant_name: "",
+      artikel_nr: "",
+      artikel_name: "",
+      vk_preis: 0,
+      pfand: 0,
+      stueck: 1,
+      showProdDropdown: false
+    };
     var app = new Vue({
       el: '#form',
       data: {
-        productGroupList: [],
-        items: [{
-          position: 1,
-          productgroup: "",
-          products: [],
-          id: "",
-          lieferant_name: "",
-          artikel_nr: "",
-          artikel_name: "",
-          vk_preis: 0,
-          pfand: 0,
-          stueck: 1,
-          showProdDropdown: false
-        }],
-        lieferung_required: false
+        productGroupListLM: [],
+        productGroupListKHW: [],
+        items: {
+          LM: [Object.assign({}, itemPrototype)], // create a new copy, no reference
+          KHW: [Object.assign({}, itemPrototype)] // create a new copy, no reference
+        },
+        lieferung_required: false,
+        currFormatter: Intl.NumberFormat('de-DE', {
+          style: 'currency',
+          currency: 'EUR'
+        })
       },
       methods: {
-        addProduct: function() {
+        addProduct: function(typ) {
           let currPosition = 0;
-          if (this.items.length > 0) {
-            currPosition = this.items[this.items.length - 1].position;
+          if (this.items[typ].length > 0) {
+            currPosition = this.items[typ][this.items[typ].length - 1].position;
           }
-          this.items.push({
-            position: currPosition + 1,
-            productgroup: "",
-            products: [],
-            id: "",
-            lieferant_name: "",
-            artikel_nr: "",
-            artikel_name: "",
-            vk_preis: 0,
-            pfand: 0,
-            stueck: 1,
-            showProdDropdown: false
-          });
+          let anotherPrototype = Object.assign({}, itemPrototype); // create a new copy, no reference
+          anotherPrototype.position = currPosition + 1;
+          console.log(itemPrototype);
+          console.log(anotherPrototype);
+          this.items[typ].push(anotherPrototype);
         },
-        removeProduct: function(position) {
-          this.items.splice(position - 1, 1);
+        removeProduct: function(typ, position) {
+          this.items[typ].splice(position - 1, 1);
           // same behavior as:
-          // Vue.delete(this.items, position - 1);
+          // Vue.delete(this.items[typ], position - 1);
           /* reassign positions as it is necessary when product was not removed from end */
           let i = 1;
-          for (let item of this.items) {
+          for (let item of this.items[typ]) {
             item.position = i;
             i += 1;
           }
@@ -307,8 +313,8 @@
             .then(response => response.data.records)
             .catch(error => console.log(error));
         },
-        updateItemProducts: function(position) {
-          let item = this.items[position - 1];
+        updateItemProducts: function(typ, position) {
+          let item = this.items[typ][position - 1];
           this.productsInGroupPromise(item.productgroup)
             .then(prods => {
               prods.forEach(prod => {
@@ -338,23 +344,27 @@
           item.imgStyle = prod.imgStyle;
         },
         preis: function(item) {
-          return currFormatter.format(item.vk_preis * item.stueck)
+          return this.currFormatter.format(item.vk_preis * item.stueck)
         },
         gesBetrag: function() {
           let gesPreis = 0;
-          for (let i of this.items) {
-            gesPreis = gesPreis + i.vk_preis * i.stueck;
-          }
           let gesPfand = 0;
-          for (let i of this.items) {
-            if (i.pfand) {
-              gesPfand = gesPfand + i.pfand * i.stueck;
+          for (let typ of Object.keys(this.items)) {
+            for (let i of this.items[typ]) {
+              gesPreis = gesPreis + i.vk_preis * i.stueck;
+              if (i.pfand) {
+                gesPfand = gesPfand + i.pfand * i.stueck;
+              }
             }
           }
-          return currFormatter.format(gesPreis + gesPfand);
+          return this.currFormatter.format(gesPreis + gesPfand);
         },
         buttonIsDisabled: function() {
-          return this.items.length < 1;
+          let l = 0;
+          for (let typ of Object.keys(this.items)) {
+            l += this.items[typ].length;
+          }
+          return (l < 1);
         },
         imageStyle: function(prod) {
           let art_nr_alphanum = prod.artikel_nr.replace(/[^\w]/g, "").toLowerCase(); // only keep a-z and 0-9
@@ -397,31 +407,48 @@
               break;
             default:
               prod.imgStyle = "background-image: url('');";
-              break;
           }
         },
         prodURL: function(prod) {
+          let url = '';
           switch (prod.lieferant_name) {
             case 'El Puente':
-              return 'https://shop.el-puente.de/' + prod.artikel_nr.toLowerCase();
+              url = 'https://shop.el-puente.de/' + prod.artikel_nr.toLowerCase();
               break;
             case 'WeltPartner':
-              return 'https://shop.weltpartner.de/suche?keyword=' + prod.artikel_nr;
+              url = 'https://shop.weltpartner.de/suche?keyword=' + prod.artikel_nr;
+              break;
             case 'GEPA':
               let art_nr_alphanum = prod.artikel_nr.replace(/[^\w]/g, "").toLowerCase(); // only keep a-z and 0-9
-              return 'https://www.gepa-wug.de/wug/media/produktpass/' + art_nr_alphanum + '.pdf';
-            default:
-              return '';
+              url = 'https://www.gepa-wug.de/wug/media/produktpass/' + art_nr_alphanum + '.pdf';
               break;
+            default:
+              url = '';
           }
+          return url;
         }
       },
       mounted: function() {
-        axios.get('api/produktgruppe/read_all.php')
+        axios.get('api/produktgruppe/read_all.php', {
+            params: {
+              typ: "LM"
+            }
+          })
           .then(response => {
             let pgl = response.data.records;
             pgl = pgl.filter(pg => pg !== "Bananen");
-            app.productGroupList = pgl;
+            app.productGroupListLM = pgl;
+          })
+          .catch(error => console.log(error));
+          axios.get('api/produktgruppe/read_all.php', {
+            params: {
+              typ: "KHW"
+            }
+          })
+          .then(response => {
+            let pgl = response.data.records;
+            // pgl = pgl.filter(pg => pg !== "Whatever");
+            app.productGroupListKHW = pgl;
           })
           .catch(error => console.log(error));
       }
@@ -434,8 +461,10 @@
         (!e.target.parentNode.classList || !e.target.parentNode.classList.contains(cls)) && // either parent node does not exist (<html>) or it does not have the class
         (!e.target.parentNode.parentNode || !e.target.parentNode.parentNode.classList || !e.target.parentNode.parentNode.classList.contains(cls))) { // either parent node's parent node does not exist (<body>) or it does not have the class
         // close all dropdowns:
-        for (let item of app.items) {
-          item.showProdDropdown = false;
+        for (let typ of Object.keys(app.items)) {
+          for (let item of app.items[typ]) {
+            item.showProdDropdown = false;
+          }
         }
       }
     });
