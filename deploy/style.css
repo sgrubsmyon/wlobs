@@ -557,7 +557,7 @@ button[type='submit'] {
   width: 98px;
   height: 98px;
   /* border: 1px solid gray; */
-  background-size: cover;
+  background-size: contain; /* also an option: cover (image will be larger, but may not be completely visible) */
   background-repeat: no-repeat;
   background-position: center;
 }
