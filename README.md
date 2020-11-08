@@ -73,6 +73,5 @@ mysql -hlocalhost -uroot -p -e "source sql/update_article_table.sql"
 ## Deploy locally for testing
 
 ```
-sudo rsync -rtlPvin --delete --exclude=.*.sw* deploy/* /var/www/html/wlobs/
+sudo rsync -rtlPvi --delete --exclude=.*.sw* deploy/* /var/www/html/wlobs/ && sudo chown -R http:http /var/www/html/wlobs/
 ```
-
