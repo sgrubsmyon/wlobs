@@ -10,13 +10,15 @@ class Produktgruppe {
   }
 
   // read all produktgruppen
-  function read_all() {
+  function read_all($typ) {
     // select all query
     $query = "SELECT DISTINCT
         produktgruppen_name
       FROM " . $this->table_name . "
+      WHERE typ = ?
       ORDER BY produktgruppen_name";
     $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $typ);
     if ($stmt->execute()) {
       $produktgruppen_arr = array();
       $num = $stmt->rowCount();

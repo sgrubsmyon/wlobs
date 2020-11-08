@@ -23,7 +23,7 @@ class Artikel {
   function read_all() {
     // select all query
     $query = "SELECT
-        produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
+        typ, produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
         vk_preis, pfand, mwst_satz
       FROM " . $this->table_name . "
       ORDER BY produktgruppen_name, REPLACE(artikel_name, \"\\\"\", \"\")";

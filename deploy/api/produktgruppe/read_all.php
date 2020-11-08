@@ -7,41 +7,35 @@ header("Content-Type: application/json; charset=UTF-8");
 include_once '../config/database.php';
 include_once '../objects/produktgruppe.php';
 
-// instantiate database and artikel object
+// instantiate database
 $database = new Database();
 $db = $database->getConnection();
-
 // initialize object
 $produktgruppe = new Produktgruppe($db);
-$produktgruppen = $produktgruppe->read_all();
+
+// read type of product from GET method
+$typ = isset($_GET['typ']) ? $_GET['typ'] : null;
+
+if (is_null($typ)) {
+  http_response_code(400); // Bad request
+  echo json_encode(array("message" => "Need to set param 'typ'.")); // tell the user
+  die();
+}
+
+// read the product groups of one product type
+$produktgruppen = $produktgruppe->read_all($typ);
 
 if (is_null($produktgruppen)) {
   // there was a DB error
-
-  // set response code - 503 service unavailable
-  http_response_code(503);
-
-  // tell the user
-  echo json_encode(array(
-    "message" => "Unable to access DB."
-  ));
+  http_response_code(503); // Service unavailable
+  echo json_encode(array("message" => "Unable to access DB.")); // tell the user
 } elseif (empty($produktgruppen)) {
   // no records found
-
-  // set response code - 404 Not found
-  http_response_code(404);
-
+  http_response_code(404); // Not found
   // tell the user no produktgruppen found
-  echo json_encode(array(
-    "message" => "No product groups found."
-  ));
+  echo json_encode(array("message" => "No product groups found."));
 } else {
-  // set response code - 200 OK
-  http_response_code(200);
-
-  // show product data in json format
-  echo json_encode(array(
-    "records" => $produktgruppen
-  ));
+  http_response_code(200); // OK
+  echo json_encode(array("records" => $produktgruppen));
 }
 ?>
