@@ -87,70 +87,17 @@
         <label for="address">Adresse</label>
         <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}" v-bind:required="lieferung_required">
       </fieldset>
+      
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
+      
       <h3>1. Lebensmittel</h3>
       <fieldset class="elem-group">
         <div v-for="item in items.LM" class="product-selection">
-          <div class="produktgruppe">
-            <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
-            <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts('LM', item.position)" required>
-              <option value="" disabled selected>Bitte auswählen...</option>
-              <option v-for="pg in productGroupListLM" v-bind:value="pg">{{ pg }}</option>
-            </select>
-          </div>
-          <div class="produkt">
-            <label v-bind:for="'product'+item.position">Produkt</label>
-            <div class="custom-select">
-              <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
-                <option value="" disabled selected>Bitte auswählen...</option>
-                <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
-              </select>
-              <div class="select-selected" @click="item.showProdDropdown = !item.showProdDropdown" :class="{ 'select-arrow-active': item.showProdDropdown, 'nothing-selected': item.id == '' }">
-                <div v-if="prodURL(item) != ''" class="produktimg" title="Klicken für mehr Infos">
-                  <a target="_blank" rel="noopener noreferrer" :href="prodURL(item)">
-                    <div :style="item.imgStyle"></div>
-                  </a>
-                </div>
-                <div v-else class="produktimg">
-                  <div :style="item.imgStyle"></div>
-                </div>
-                <div class="produktname">
-                  <div :title="item.artikel_name">{{ item.artikel_name }}</div>
-                </div>
-                <div class="lieferant">{{ item.lieferant_name }}</div>
-                <div class="preis">{{ currFormatter.format(item.vk_preis) }}</div>
-                <div class="produktpfeil">
-                  <div></div>
-                </div>
-              </div>
-              <div class="select-items" v-show="item.showProdDropdown">
-                <div v-for="p in item.products" v-on:click="item.id = p.lieferant_name+'______'+p.artikel_nr; updateItem(item)">
-                  <div v-if="prodURL(p) != ''" class="produktimg" title="Klicken für mehr Infos">
-                    <a target="_blank" rel="noopener noreferrer" :href="prodURL(p)">
-                      <div :style="p.imgStyle"></div>
-                    </a>
-                  </div>
-                  <div v-else class="produktimg">
-                    <div :style="p.imgStyle"></div>
-                  </div>
-                  <div class="produktname">
-                    <div :title="p.artikel_name">{{ p.artikel_name }}</div>
-                  </div>
-                  <div class="lieferant">{{ p.lieferant_name }}</div>
-                  <div class="preis">{{ currFormatter.format(p.vk_preis) }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="stueck">
-            <label v-bind:for="'stueck'+item.position">Stück</label>
-            <input type="number" v-bind:id="'stueck'+item.position" v-bind:name="'stueck'+item.position" min="1" max="1000" v-model="item.stueck">
-          </div>
-          <div class="preis">
-            <label v-bind:for="'preis'+item.position">Preis</label>
-            <input type="text" v-bind:id="'preis'+item.position" v-bind:name="'preis'+item.position" v-bind:value="preis(item)" disabled>
-          </div>
-          <button type="button" class="muelltonne square" v-on:click="removeProduct('LM', item.position)"><ion-icon name="trash-outline"></ion-icon></button>
+          <produktgruppe typ="LM" v-bind:item="item" v-bind:items="items" v-bind:pgl="productGroupList.LM"></produktgruppe>
+          <produkt v-bind:item="item" v-bind:curr-formatter="currFormatter"></produkt>
+          <stueck v-bind:item="item"></stueck>
+          <preis v-bind:item="item" v-bind:curr-formatter="currFormatter"></preis>
+          <muelltonne typ="LM" v-bind:item="item" v-bind:items="items"></muelltonne>
         </div>
         <button class="add-prod-button" type="button" v-on:click="addProduct('LM')">+ Lebensmittel hinzufügen</button>
         <div class="ges-betrag">
@@ -162,13 +109,11 @@
       <h3>2. Handwerk</h3>
       <fieldset class="elem-group">
         <div v-for="item in items.KHW" class="product-selection">
-          <div class="produktgruppe">
-            <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
-            <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts('KHW', item.position)" required>
-              <option value="" disabled selected>Bitte auswählen...</option>
-              <option v-for="pg in productGroupListKHW" v-bind:value="pg">{{ pg }}</option>
-            </select>
-          </div>
+          <produktgruppe typ="KHW" v-bind:item="item" v-bind:items="items" v-bind:pgl="productGroupList.KHW"></produktgruppe>
+          <produkt v-bind:item="item" v-bind:curr-formatter="currFormatter"></produkt>
+          <stueck v-bind:item="item"></stueck>
+          <preis v-bind:item="item" v-bind:curr-formatter="currFormatter"></preis>
+          <muelltonne typ="KHW" v-bind:item="item" v-bind:items="items"></muelltonne>
         </div>
         <button class="add-prod-button" type="button" v-on:click="addProduct('KHW')">+ Handwerk hinzufügen</button>
         <div class="ges-betrag">
@@ -251,57 +196,11 @@
     // Vue.component('v-select', VueSelect.VueSelect);
 
     Vue.config.ignoredElements = [/^ion-/];
-    let itemPrototype = {
-      position: 1,
-      productgroup: "",
-      products: [],
-      id: "",
-      lieferant_name: "",
-      artikel_nr: "",
-      artikel_name: "",
-      vk_preis: 0,
-      pfand: 0,
-      stueck: 1,
-      showProdDropdown: false
-    };
-    var app = new Vue({
-      el: '#form',
-      data: {
-        productGroupListLM: [],
-        productGroupListKHW: [],
-        items: {
-          LM: [Object.assign({}, itemPrototype)], // create a new copy, no reference
-          KHW: [Object.assign({}, itemPrototype)] // create a new copy, no reference
-        },
-        lieferung_required: false,
-        currFormatter: Intl.NumberFormat('de-DE', {
-          style: 'currency',
-          currency: 'EUR'
-        })
-      },
+    
+    // Define a new component
+    Vue.component('produktgruppe', {
+      props: ['typ', 'item', 'items', 'pgl'],
       methods: {
-        addProduct: function(typ) {
-          let currPosition = 0;
-          if (this.items[typ].length > 0) {
-            currPosition = this.items[typ][this.items[typ].length - 1].position;
-          }
-          let anotherPrototype = Object.assign({}, itemPrototype); // create a new copy, no reference
-          anotherPrototype.position = currPosition + 1;
-          console.log(itemPrototype);
-          console.log(anotherPrototype);
-          this.items[typ].push(anotherPrototype);
-        },
-        removeProduct: function(typ, position) {
-          this.items[typ].splice(position - 1, 1);
-          // same behavior as:
-          // Vue.delete(this.items[typ], position - 1);
-          /* reassign positions as it is necessary when product was not removed from end */
-          let i = 1;
-          for (let item of this.items[typ]) {
-            item.position = i;
-            i += 1;
-          }
-        },
         productsInGroupPromise: function(productgroup) {
           /* https://www.thetechieshouse.com/vue-js-rest-api-example-with-axios-ajax-alternative/ */
           /* https://stackoverflow.com/questions/49661209/get-response-from-axios-with-await-async */
@@ -318,7 +217,8 @@
           this.productsInGroupPromise(item.productgroup)
             .then(prods => {
               prods.forEach(prod => {
-                this.imageStyle(prod)
+                this.setImageStyle(prod)
+                this.setProdURL(prod)
               });
               item.products = prods;
               item.id = "";
@@ -331,42 +231,7 @@
               item.showProdDropdown = false;
             });
         },
-        updateItem: function(item) {
-          const prod = item.products.filter(p => {
-            let id = item.id.split("______");
-            return p.lieferant_name === id[0] && p.artikel_nr === id[1]
-          })[0];
-          item.lieferant_name = prod.lieferant_name;
-          item.artikel_nr = prod.artikel_nr;
-          item.artikel_name = prod.artikel_name;
-          item.vk_preis = prod.vk_preis;
-          item.pfand = prod.pfand;
-          item.imgStyle = prod.imgStyle;
-        },
-        preis: function(item) {
-          return this.currFormatter.format(item.vk_preis * item.stueck)
-        },
-        gesBetrag: function() {
-          let gesPreis = 0;
-          let gesPfand = 0;
-          for (let typ of Object.keys(this.items)) {
-            for (let i of this.items[typ]) {
-              gesPreis = gesPreis + i.vk_preis * i.stueck;
-              if (i.pfand) {
-                gesPfand = gesPfand + i.pfand * i.stueck;
-              }
-            }
-          }
-          return this.currFormatter.format(gesPreis + gesPfand);
-        },
-        buttonIsDisabled: function() {
-          let l = 0;
-          for (let typ of Object.keys(this.items)) {
-            l += this.items[typ].length;
-          }
-          return (l < 1);
-        },
-        imageStyle: function(prod) {
+        setImageStyle: function(prod) {
           let art_nr_alphanum = prod.artikel_nr.replace(/[^\w]/g, "").toLowerCase(); // only keep a-z and 0-9
           switch (prod.lieferant_name) {
             case 'El Puente':
@@ -426,6 +291,196 @@
               url = '';
           }
           return url;
+        },
+        setProdURL: function(prod) {
+          prod.prodURL = this.prodURL(prod);
+        }
+      },
+      template: `
+        <div class="produktgruppe">
+          <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
+          <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts(typ, item.position)" required>
+            <option value="" disabled selected>Bitte auswählen...</option>
+            <option v-for="pg in pgl" v-bind:value="pg">{{ pg }}</option>
+          </select>
+        </div>
+      `
+    });
+
+    Vue.component('produkt', {
+      props: ['item', 'curr-formatter'],
+      methods: {
+        updateItem: function(item) {
+          const prod = item.products.filter(p => {
+            let id = item.id.split("______");
+            return p.lieferant_name === id[0] && p.artikel_nr === id[1]
+          })[0];
+          item.lieferant_name = prod.lieferant_name;
+          item.artikel_nr = prod.artikel_nr;
+          item.artikel_name = prod.artikel_name;
+          item.vk_preis = prod.vk_preis;
+          item.pfand = prod.pfand;
+          item.imgStyle = prod.imgStyle;
+          item.prodURL = prod.prodURL;
+        }
+      },
+      template: `
+        <div class="produkt">
+          <label v-bind:for="'product'+item.position">Produkt</label>
+          <div class="custom-select">
+            <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
+              <option value="" disabled selected>Bitte auswählen...</option>
+              <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
+            </select>
+            <div class="select-selected" @click="item.showProdDropdown = !item.showProdDropdown" :class="{ 'select-arrow-active': item.showProdDropdown, 'nothing-selected': item.id == '' }">
+              <div v-if="item.prodURL != ''" class="produktimg" title="Klicken für mehr Infos">
+                <a target="_blank" rel="noopener noreferrer" :href="item.prodURL">
+                  <div :style="item.imgStyle"></div>
+                </a>
+              </div>
+              <div v-else class="produktimg">
+                <div :style="item.imgStyle"></div>
+              </div>
+              <div class="produktname">
+                <div :title="item.artikel_name">{{ item.artikel_name }}</div>
+              </div>
+              <div class="lieferant">{{ item.lieferant_name }}</div>
+              <div class="preis">{{ currFormatter.format(item.vk_preis) }}</div>
+              <div class="produktpfeil">
+                <div></div>
+              </div>
+            </div>
+            <div class="select-items" v-show="item.showProdDropdown">
+              <div v-for="p in item.products" v-on:click="item.id = p.lieferant_name+'______'+p.artikel_nr; updateItem(item)">
+                <div v-if="p.prodURL != ''" class="produktimg" title="Klicken für mehr Infos">
+                  <a target="_blank" rel="noopener noreferrer" :href="p.prodURL">
+                    <div :style="p.imgStyle"></div>
+                  </a>
+                </div>
+                <div v-else class="produktimg">
+                  <div :style="p.imgStyle"></div>
+                </div>
+                <div class="produktname">
+                  <div :title="p.artikel_name">{{ p.artikel_name }}</div>
+                </div>
+                <div class="lieferant">{{ p.lieferant_name }}</div>
+                <div class="preis">{{ currFormatter.format(p.vk_preis) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    });
+
+    Vue.component('stueck', {
+      props: ['item'],
+      template: `
+        <div class="stueck">
+          <label v-bind:for="'stueck'+item.position">Stück</label>
+          <input type="number" v-bind:id="'stueck'+item.position" v-bind:name="'stueck'+item.position" min="1" max="1000" v-model="item.stueck">
+        </div>
+      `
+    });
+
+    Vue.component('preis', {
+      props: ['item', 'curr-formatter'],
+      methods: {
+        preis: function(item) {
+          return this.currFormatter.format(item.vk_preis * item.stueck);
+        }
+      },
+      template: `
+        <div class="preis">
+          <label v-bind:for="'preis'+item.position">Preis</label>
+          <input type="text" v-bind:id="'preis'+item.position" v-bind:name="'preis'+item.position" v-bind:value="preis(item)" disabled>
+        </div>
+      `
+    });
+
+    Vue.component('muelltonne', {
+      props: ['typ', 'item', 'items'],
+      methods: {
+        removeProduct: function(typ, position) {
+          this.items[typ].splice(position - 1, 1);
+          // same behavior as:
+          // Vue.delete(this.items[typ], position - 1);
+          /* reassign positions as it is necessary when product was not removed from end */
+          let i = 1;
+          for (let item of this.items[typ]) {
+            item.position = i;
+            i += 1;
+          }
+        }
+      },
+      template: `
+        <button type="button" class="muelltonne square" v-on:click="removeProduct(typ, item.position)"><ion-icon name="trash-outline"></ion-icon></button>
+      `
+    });
+
+    let itemPrototype = {
+      position: 1,
+      productgroup: "",
+      products: [],
+      id: "",
+      lieferant_name: "",
+      artikel_nr: "",
+      artikel_name: "",
+      vk_preis: 0,
+      pfand: 0,
+      imgStyle: "",
+      prodURL: "",
+      stueck: 1,
+      showProdDropdown: false
+    };
+
+    var app = new Vue({
+      el: '#form',
+      data: {
+        productGroupList: {
+          LM: [],
+          KHW: []
+        },
+        items: {
+          LM: [Object.assign({}, itemPrototype)], // create a new copy, no reference
+          KHW: [Object.assign({}, itemPrototype)] // create a new copy, no reference
+        },
+        lieferung_required: false,
+        currFormatter: Intl.NumberFormat('de-DE', {
+          style: 'currency',
+          currency: 'EUR'
+        })
+      },
+      methods: {
+        addProduct: function(typ) {
+          let currPosition = 0;
+          if (this.items[typ].length > 0) {
+            currPosition = this.items[typ][this.items[typ].length - 1].position;
+          }
+          let anotherPrototype = Object.assign({}, itemPrototype); // create a new copy, no reference
+          anotherPrototype.position = currPosition + 1;
+          console.log(itemPrototype);
+          console.log(anotherPrototype);
+          this.items[typ].push(anotherPrototype);
+        },
+        gesBetrag: function() {
+          let gesPreis = 0;
+          let gesPfand = 0;
+          for (let typ of Object.keys(this.items)) {
+            for (let i of this.items[typ]) {
+              gesPreis = gesPreis + i.vk_preis * i.stueck;
+              if (i.pfand) {
+                gesPfand = gesPfand + i.pfand * i.stueck;
+              }
+            }
+          }
+          return this.currFormatter.format(gesPreis + gesPfand);
+        },
+        buttonIsDisabled: function() {
+          let l = 0;
+          for (let typ of Object.keys(this.items)) {
+            l += this.items[typ].length;
+          }
+          return (l < 1);
         }
       },
       mounted: function() {
@@ -437,7 +492,7 @@
           .then(response => {
             let pgl = response.data.records;
             pgl = pgl.filter(pg => pg !== "Bananen");
-            app.productGroupListLM = pgl;
+            app.productGroupList.LM = pgl;
           })
           .catch(error => console.log(error));
           axios.get('api/produktgruppe/read_all.php', {
@@ -448,7 +503,7 @@
           .then(response => {
             let pgl = response.data.records;
             // pgl = pgl.filter(pg => pg !== "Whatever");
-            app.productGroupListKHW = pgl;
+            app.productGroupList.KHW = pgl;
           })
           .catch(error => console.log(error));
       }
