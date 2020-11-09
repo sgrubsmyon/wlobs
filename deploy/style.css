@@ -337,12 +337,12 @@ textarea {
 
 button,
 .lbl-toggle {
-  width: 200px;
+  width: 160px;
   font-weight: bold;
-  font-size: 1.2rem;
+  /* font-size: 1.2rem; */
   text-transform: uppercase;
   text-align: center;
-  padding: 1rem;
+  padding: 0.7rem;
   color: #DDFED6;
   background-color: #80ca2c;
   cursor: pointer;
