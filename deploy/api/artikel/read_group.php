@@ -19,9 +19,11 @@ $artikel = new Artikel($db);
 
 // read name of product group from GET method
 $groupname = isset($_GET['name']) ? $_GET['name'] : die();
+// read type of product from GET method (if present)
+$typ = isset($_GET['typ']) ? $_GET['typ'] : null;
 
 // read the details of one product group
-$products = $artikel->read_group($groupname);
+$products = $artikel->read_group($groupname, $typ);
 
 if (is_null($products)) {
   // there was a DB error

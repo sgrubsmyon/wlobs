@@ -201,12 +201,13 @@
     Vue.component('produktgruppe', {
       props: ['typ', 'item', 'items', 'pgl'],
       methods: {
-        productsInGroupPromise: function(productgroup) {
+        productsInGroupPromise: function(productgroup, typ) {
           /* https://www.thetechieshouse.com/vue-js-rest-api-example-with-axios-ajax-alternative/ */
           /* https://stackoverflow.com/questions/49661209/get-response-from-axios-with-await-async */
           return axios.get('api/artikel/read_group.php', {
               params: {
-                name: productgroup
+                name: productgroup,
+                typ: typ
               }
             })
             .then(response => response.data.records)
@@ -214,7 +215,7 @@
         },
         updateItemProducts: function(typ, position) {
           let item = this.items[typ][position - 1];
-          this.productsInGroupPromise(item.productgroup)
+          this.productsInGroupPromise(item.productgroup, typ)
             .then(prods => {
               prods.forEach(prod => {
                 this.setImageStyle(prod)

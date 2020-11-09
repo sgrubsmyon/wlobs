@@ -51,18 +51,22 @@ class Artikel {
   }
 
   // read products from one product group
-  function read_group($groupname) {
+  function read_group($groupname, $typ) {
     // select group query
     $query = "SELECT
-        produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
+        typ, produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
         vk_preis, pfand, mwst_satz
       FROM " . $this->table_name . "
-      WHERE produktgruppen_name = ?
+      WHERE produktgruppen_name = ? " .
+      (is_null($typ) ? "" : "AND typ = ?") . "
       ORDER BY produktgruppen_name, REPLACE(artikel_name, \"\\\"\", \"\")";
 
     // prepare query statement
     $stmt = $this->conn->prepare($query);
     $stmt->bindParam(1, $groupname);
+    if (!is_null($typ)) {
+      $stmt->bindParam(2, $typ);
+    }
 
     // execute query
     if ($stmt->execute()) {
