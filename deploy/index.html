@@ -94,9 +94,9 @@
       <fieldset class="elem-group">
         <div v-for="item in items.LM" class="product-selection">
           <produktgruppe typ="LM" v-bind:item="item" v-bind:items="items" v-bind:pgl="productGroupList.LM"></produktgruppe>
-          <produkt v-bind:item="item" v-bind:curr-formatter="currFormatter"></produkt>
-          <stueck v-bind:item="item"></stueck>
-          <preis v-bind:item="item" v-bind:curr-formatter="currFormatter"></preis>
+          <produkt typ="LM" v-bind:item="item" v-bind:curr-formatter="currFormatter"></produkt>
+          <stueck typ="LM" v-bind:item="item"></stueck>
+          <preis typ="LM" v-bind:item="item" v-bind:curr-formatter="currFormatter"></preis>
           <muelltonne typ="LM" v-bind:item="item" v-bind:items="items"></muelltonne>
         </div>
         <button class="add-prod-button" type="button" v-on:click="addProduct('LM')">+ Lebensmittel hinzufügen</button>
@@ -110,9 +110,9 @@
       <fieldset class="elem-group">
         <div v-for="item in items.KHW" class="product-selection">
           <produktgruppe typ="KHW" v-bind:item="item" v-bind:items="items" v-bind:pgl="productGroupList.KHW"></produktgruppe>
-          <produkt v-bind:item="item" v-bind:curr-formatter="currFormatter"></produkt>
-          <stueck v-bind:item="item"></stueck>
-          <preis v-bind:item="item" v-bind:curr-formatter="currFormatter"></preis>
+          <produkt typ="KHW" v-bind:item="item" v-bind:curr-formatter="currFormatter"></produkt>
+          <stueck typ="KHW" v-bind:item="item"></stueck>
+          <preis typ="KHW" v-bind:item="item" v-bind:curr-formatter="currFormatter"></preis>
           <muelltonne typ="KHW" v-bind:item="item" v-bind:items="items"></muelltonne>
         </div>
         <button class="add-prod-button" type="button" v-on:click="addProduct('KHW')">+ Handwerk hinzufügen</button>
@@ -218,8 +218,8 @@
           this.productsInGroupPromise(item.productgroup, typ)
             .then(prods => {
               prods.forEach(prod => {
-                this.setImageStyle(prod)
-                this.setProdURL(prod)
+                this.setImageStyle(typ, prod)
+                this.setProdURL(typ, prod)
               });
               item.products = prods;
               item.id = "";
@@ -232,75 +232,99 @@
               item.showProdDropdown = false;
             });
         },
-        setImageStyle: function(prod) {
-          let art_nr_alphanum = prod.artikel_nr.replace(/[^\w]/g, "").toLowerCase(); // only keep a-z and 0-9
+        setImageStyle: function(typ, prod) {
+          let art_nr = prod.artikel_nr.trim().toLowerCase();
+          let art_nr_alphanum = art_nr.replace(/[^\w]/g, ""); // only keep a-z and 0-9
+          let url = '';
           switch (prod.lieferant_name) {
             case 'El Puente':
-              let a = prod.artikel_nr[0].toLowerCase(); // 1st character
-              let b = prod.artikel_nr[1].toLowerCase(); // 2nd character
+              let a = art_nr[0]; // 1st character
+              let b = art_nr[1]; // 2nd character
               // Sometimes cache is empty and image is generated only after product page was accessed:
-              let url = "https://shop.el-puente.de/media/catalog/product/cache/image/700x700/e9c3970ab036de70892d86c6d221abfe/" + a + "/" + b + "/" + art_nr_alphanum + ".jpg";
-              prod.imgStyle = "background-image: url('" + url + "');";
+              let tryurl = "https://shop.el-puente.de/media/catalog/product/cache/image/700x700/e9c3970ab036de70892d86c6d221abfe/" + a + "/" + b + "/" + art_nr_alphanum + ".jpg";
               // Also here, sometimes cache is empty, and the above is at least generated when product page is visited (by clicking on image):
               // "background-image: url('https://shop.el-puente.de/media/catalog/product/cache/thumbnail/130x160/beff4985b56e3afdbeabfc89641a4582/" + a + "/" + b + "/" + art_nr_alphanum + ".jpg');"
               // Check if image does not exist (cache is empty):
               let img = new Image();
               img.onerror = () => {
                 // Set empty URL first, replace with actual url later after page was accessed
-                prod.imgStyle = "background-image: url('');";
+                url = '';
                 // Access the El Puente product page so that the image is created in the cache
                 axios.post('access-ep.php', {
-                    url: this.prodURL(prod)
+                    url: this.prodURL(typ, prod)
                   })
                   .then(response => {
                     // Try it again:
                     let img2 = new Image();
                     img2.onload = () => {
                       // If OK:
-                      prod.imgStyle = "background-image: url('" + url + "');";
+                      url = tryurl;
                     }
-                    img2.src = url;
+                    img2.src = tryurl;
                   })
                   .catch(error => console.log(error));
               };
-              img.src = url;
+              img.src = tryurl;
               break;
             case 'WeltPartner':
-              prod.imgStyle = "background-image: url('https://shop.weltpartner.de/images/stories/virtuemart/product/resized/" + prod.artikel_nr.toLowerCase() + "_380x380.jpg');";
+              url = 'https://shop.weltpartner.de/images/stories/virtuemart/product/resized/' + art_nr + '_380x380.jpg';
               break;
             case 'GEPA':
-              prod.imgStyle = "background-image: url('https://www.gepa-wug.de/wug/bilder/inhalt/food/normal/" + art_nr_alphanum + ".jpg');";
-              break;
+              if (typ == 'LM') {
+                url = 'https://www.gepa-wug.de/wug/bilder/inhalt/food/normal/' + art_nr_alphanum + '.jpg';
+                break;
+              } else if (typ == 'KHW') {
+                url = 'https://www.gepa-wug.de/wug/bilder/inhalt/klein/' + art_nr_alphanum + '.jpg';
+                break;
+              }
+            case 'Globo':
+              if (typ == 'KHW') {
+                url = 'https://www.gepa-wug.de/wug/bilder/inhalt/klein/' + art_nr_alphanum.toUpperCase() + '.jpg';
+                break;
+              }
             default:
-              prod.imgStyle = "background-image: url('');";
+              url = '';
           }
+          prod.imgStyle = "background-image: url('" + url + "');";
         },
-        prodURL: function(prod) {
+        prodURL: function(typ, prod) {
           let url = '';
+          let art_nr = prod.artikel_nr.trim().toLowerCase();
           switch (prod.lieferant_name) {
             case 'El Puente':
-              url = 'https://shop.el-puente.de/' + prod.artikel_nr.toLowerCase();
+              art_nr = art_nr.replace(/ /g, "-");
+              url = 'https://shop.el-puente.de/' + art_nr;
               break;
             case 'WeltPartner':
-              url = 'https://shop.weltpartner.de/suche?keyword=' + prod.artikel_nr;
+              art_nr = art_nr.replace(/ /g, "-");
+              art_nr = art_nr.substring(0, 10).toUpperCase();
+              url = 'https://shop.weltpartner.de/suche?keyword=' + art_nr;
               break;
             case 'GEPA':
-              let art_nr_alphanum = prod.artikel_nr.replace(/[^\w]/g, "").toLowerCase(); // only keep a-z and 0-9
-              url = 'https://www.gepa-wug.de/wug/media/produktpass/' + art_nr_alphanum + '.pdf';
+              let art_nr_alphanum = art_nr.replace(/[^\w]/g, ""); // only keep a-z and 0-9
+              if (typ == 'LM') {
+                url = 'https://www.gepa-wug.de/wug/media/produktpass/' + art_nr_alphanum + '.pdf';
+                break;
+              } else if (typ == 'KHW') {
+                url = 'https://www.gepa-wug.de/wug/htdocs/index.php?suchart=' + art_nr_alphanum + '&Submit=SUCHEN&serie=&partner=&sID=0101&search=11&produkt=promenu&themah=01&lan=de&land=&priceSearch=-';
+                break;
+              }
+            case 'Globo':
+              url = 'https://www.globo-fairtrade.com/search?sSearch=' + art_nr.toUpperCase();
               break;
             default:
               url = '';
           }
           return url;
         },
-        setProdURL: function(prod) {
-          prod.prodURL = this.prodURL(prod);
+        setProdURL: function(typ, prod) {
+          prod.prodURL = this.prodURL(typ, prod);
         }
       },
       template: `
         <div class="produktgruppe">
           <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
-          <select v-bind:id="'productgroup'+item.position" v-bind:name="'productgroup'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts(typ, item.position)" required>
+          <select v-bind:id="'productgroup-'+typ.toLowerCase()+'-'+item.position" v-bind:name="'productgroup-'+typ.toLowerCase()+'-'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts(typ, item.position)" required>
             <option value="" disabled selected>Bitte auswählen...</option>
             <option v-for="pg in pgl" v-bind:value="pg">{{ pg }}</option>
           </select>
@@ -309,7 +333,7 @@
     });
 
     Vue.component('produkt', {
-      props: ['item', 'curr-formatter'],
+      props: ['typ', 'item', 'curr-formatter'],
       methods: {
         updateItem: function(item) {
           const prod = item.products.filter(p => {
@@ -329,7 +353,7 @@
         <div class="produkt">
           <label v-bind:for="'product'+item.position">Produkt</label>
           <div class="custom-select">
-            <select v-bind:id="'product'+item.position" v-bind:name="'product'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
+            <select v-bind:id="'product-'+typ.toLowerCase()+'-'+item.position" v-bind:name="'product-'+typ.toLowerCase()+'-'+item.position" v-model="item.id" v-on:change="updateItem(item)" required>
               <option value="" disabled selected>Bitte auswählen...</option>
               <option v-for="p in item.products" v-bind:value="p.lieferant_name+'______'+p.artikel_nr">{{ p.artikel_name + ' (' + p.lieferant_name + ')' }}</option>
             </select>
@@ -374,17 +398,17 @@
     });
 
     Vue.component('stueck', {
-      props: ['item'],
+      props: ['typ', 'item'],
       template: `
         <div class="stueck">
           <label v-bind:for="'stueck'+item.position">Stück</label>
-          <input type="number" v-bind:id="'stueck'+item.position" v-bind:name="'stueck'+item.position" min="1" max="1000" v-model="item.stueck">
+          <input type="number" v-bind:id="'stueck-'+typ.toLowerCase()+'-'+item.position" v-bind:name="'stueck-'+typ.toLowerCase()+'-'+item.position" min="1" max="1000" v-model="item.stueck">
         </div>
       `
     });
 
     Vue.component('preis', {
-      props: ['item', 'curr-formatter'],
+      props: ['typ', 'item', 'curr-formatter'],
       methods: {
         preis: function(item) {
           return this.currFormatter.format(item.vk_preis * item.stueck);
@@ -393,7 +417,7 @@
       template: `
         <div class="preis">
           <label v-bind:for="'preis'+item.position">Preis</label>
-          <input type="text" v-bind:id="'preis'+item.position" v-bind:name="'preis'+item.position" v-bind:value="preis(item)" disabled>
+          <input type="text" v-bind:id="'preis-'+typ.toLowerCase()+'-'+item.position" v-bind:name="'preis-'+typ.toLowerCase()+'-'+item.position" v-bind:value="preis(item)" disabled>
         </div>
       `
     });

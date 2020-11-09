@@ -50,25 +50,54 @@ if($_POST) {
   /* Process data to be sent to API from POST request (form submit) */
   $data = array('details' => array());
 
-  $still_processing = true;
+  /* https://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php */
+  function startsWith($haystack, $needle) {
+    return substr_compare($haystack, $needle, 0, strlen($needle)) === 0;
+  }
+  // function endsWith($haystack, $needle) {
+  //     return substr_compare($haystack, $needle, -strlen($needle)) === 0;
+  // }
+
+  echo '<pre>'; print_r($_POST); echo '</pre>';
+  $types = array_filter(array_keys($_POST), function($k) {
+    return startsWith($k, 'product-');
+  });
+  $types = array_map(function($typ) {
+    $matches = array();
+    preg_match('/^product-([a-z]+)-/', $typ, $matches);
+    return $matches[1]; // strtoupper(): not now!
+  }, $types);
+  $types = array_unique($types);
+  echo '<pre>'; print_r($types); echo '</pre>';
+
   $position = 0;
-  while ($still_processing) {
-    $position++;
-    if (array_key_exists('product'.$position, $_POST)) {
-      $stueck = $_POST['stueck'.$position];
-      list($lief, $artnr) = explode("______", $_POST['product'.$position]); // extract lieferant name and article number from composite string
-      if ($stueck > 0) {
-        array_push($data['details'], array(
-          "position" => $position,
-          "stueckzahl" => $stueck,
-          "lieferant_name" => $lief,
-          "artikel_nr" => $artnr
-        ));
+  foreach ($types as $typ) {
+    echo $typ.'<br>';
+    $still_processing = true;
+    $typ_position = 0;
+    while ($still_processing) {
+      $position++;
+      $typ_position++;
+      echo $typ_position.'<br>';
+      if (array_key_exists('product-'.$typ.'-'.$typ_position, $_POST)) {
+        $stueck = $_POST['stueck-'.$typ.'-'.$typ_position];
+        list($lief, $artnr) = explode("______", $_POST['product-'.$typ.'-'.$typ_position]); // extract lieferant name and article number from composite string
+        if ($stueck > 0) {
+          array_push($data['details'], array(
+            "position" => $position,
+            "stueckzahl" => $stueck,
+            "lieferant_name" => $lief,
+            "artikel_nr" => $artnr
+          ));
+        }
+      } else {
+        $position--;
+        $still_processing = false;
       }
-    } else {
-      $still_processing = false;
     }
   }
+  echo '<pre>'; print_r($data); echo '</pre>';
+  die();
 
   /* Send order data to DB and create new entries there,
      API will return data to put into email if successful
