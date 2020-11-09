@@ -102,7 +102,7 @@
         <button class="add-prod-button" type="button" v-on:click="addProduct('LM')">+ Lebensmittel hinzufügen</button>
         <div class="ges-betrag">
           <label for="teil-betrag-lm">Teilbetrag Lebensmittel (evtl. inkl. Pfand):</label>
-          <input type="text" id="teil-betrag-lm" v-bind:value="gesBetrag()" disabled>
+          <input type="text" id="teil-betrag-lm" v-bind:value="zwischensumme('LM')" disabled>
         </div>
       </fieldset>
 
@@ -118,7 +118,7 @@
         <button class="add-prod-button" type="button" v-on:click="addProduct('KHW')">+ Handwerk hinzufügen</button>
         <div class="ges-betrag">
           <label for="teil-betrag-khw">Teilbetrag Handwerk:</label>
-          <input type="text" id="teil-betrag-khw" v-bind:value="gesBetrag()" disabled>
+          <input type="text" id="teil-betrag-khw" v-bind:value="zwischensumme('KHW')" disabled>
         </div>
       </fieldset>
       <fieldset class="elem-group">
@@ -462,16 +462,28 @@
           console.log(anotherPrototype);
           this.items[typ].push(anotherPrototype);
         },
+        zwischensummen: function(typ) {
+          let zs = {preis: 0, pfand: 0};
+          for (let i of this.items[typ]) {
+            zs.preis = zs.preis + i.vk_preis * i.stueck;
+            if (i.pfand) {
+              zs.pfand = zs.pfand + i.pfand * i.stueck;
+            }
+          }
+          return zs;
+        },
+        zwischensumme: function(typ) {
+          let values = Object.values(this.zwischensummen(typ));
+          let sum = values.reduce((a, b) => a + b);
+          return this.currFormatter.format(sum);
+        },
         gesBetrag: function() {
           let gesPreis = 0;
           let gesPfand = 0;
           for (let typ of Object.keys(this.items)) {
-            for (let i of this.items[typ]) {
-              gesPreis = gesPreis + i.vk_preis * i.stueck;
-              if (i.pfand) {
-                gesPfand = gesPfand + i.pfand * i.stueck;
-              }
-            }
+            let zs = this.zwischensummen(typ);
+            gesPreis += zs.preis;
+            gesPfand += zs.pfand;
           }
           return this.currFormatter.format(gesPreis + gesPfand);
         },
