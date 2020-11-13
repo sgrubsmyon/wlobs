@@ -46,7 +46,9 @@ Rename directory `api` to `api.deactivated`.
 
 #### Download current version of the wlobs DB
 
-Log into your hoster's DB management system and export the current DB as SQL file.
+Log into your hoster's DB management system and export the current DB as SQL file `d_old.sql`.
+(Important: Click 'export' on start page of phpmyadmin, don't click on the DB first, otherwise
+only the tables are exported and the `CREATE DATABASE` statement is missing.)
 
 #### Import the downloaded DB into localhost
 
