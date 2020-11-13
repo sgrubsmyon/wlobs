@@ -326,7 +326,7 @@ if ($_POST) {
     <h2>Vielen Dank für Ihre Bestellung!</h2>
 
     <p>
-      <a href='index.html'>← Zurück zum Bestellformular</a>
+      <a href='.'>← Zurück zum Bestellformular</a>
     </p>
 
     <p>
@@ -347,7 +347,7 @@ if ($_POST) {
     </p>
 
     <p>
-      <a href='index.html'>← Zurück zum Bestellformular</a>
+      <a href='.'>← Zurück zum Bestellformular</a>
     </p>
 
     <p>
