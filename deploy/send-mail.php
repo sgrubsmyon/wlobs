@@ -195,24 +195,30 @@ if($_POST) {
         <tbody>
           <tr>
             <th>Position</th>
+            <th>Typ</th>
+            <th>Sortiment</th>
             <th>Lieferant</th>
             <th>Artikel-Nr.</th>
             <th>Artikelname</th>
             <th>Stück</th>
             <th>Preis</th>
             <th>Pfand</th>
+            <th>MwSt.</th>
           </tr>
     ";
     foreach ($bestellung["details"] as $item) {
       $order_msg = $order_msg . "
         <tr>
           <td>" . $item["position"] . "</td>
+          <td>" . $item["typ"] . "</td>
+          <td>" . ($item["sortiment"] == "1" ? "Ja" : "Nein") . "</td>
           <td>" . $item["lieferant_name"] . "</td>
           <td>" . $item["artikel_nr"] . "</td>
           <td>" . $item["artikel_name"] . "</td>
           <td>" . $item["stueckzahl"] . "</td>
           <td>" . $curr_fmt->formatCurrency($item["ges_preis"], "EUR") . "</td>
           <td>" . (is_null($item["ges_pfand"]) ? "—" : $curr_fmt->formatCurrency($item["ges_pfand"], "EUR")) . "</td>
+          <td>" . ($item["mwst_satz"] * 100) . "%</td>
         </tr>
       ";
     }
