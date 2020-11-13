@@ -20,6 +20,15 @@ sudo mysql -e "source sql/create_db_full_local.sql"
 
 ### Update of article DB in running system
 
+#### Load recent dump from Weltladenkasse DB `kasse`
+
+Load a recent dump of the DB running in the Weltladen into your local
+development DB server.
+
+```
+mysql --local-infile -hlocalhost -ukassenadmin -p -e "source DB_Dump_kasse_XX.sql" kasse
+```
+
 #### Export data from Weltladenkasse DB `kasse`
 
 ```
@@ -28,11 +37,41 @@ sudo mv -i /var/lib/mysql/kasse/artikel_lm.txt .
 sudo mv -i /var/lib/mysql/kasse/artikel_khw.txt .
 ```
 
-#### Update wlobs DB with new data
+#### Put wlobs site into maintenance mode
+
+Log into FTP server with Filezilla. Rename `index.html` to `index.production.html`
+and `index.maintenance.html` to `index.html`.
+
+Rename directory `api` to `api.deactivated`.
+
+#### Download current version of the wlobs DB
+
+Log into your hoster's DB management system and export the current DB as SQL file.
+
+#### Import the downloaded DB into localhost
+
+```
+sudo mysql
+> DROP DATABASE d;
+> Ctrl-D
+sudo mysql -e "source d_old.sql"
+```
+
+#### Update wlobs DB with new data locally
 
 ```
 sudo mysql -e "source sql/update_article_table.sql"
 ```
+
+#### Create dump of updated wlobs DB
+
+```
+sudo mysqldump --databases d --add-drop-database -r d_new.sql
+```
+
+#### Upload new version of the wlobs DB
+
+Log into your hoster's DB management system and import the new DB SQL file `d_new.sql`.
 
 ## Outdated: Ubuntu 16.04
 
