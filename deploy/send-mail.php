@@ -122,9 +122,6 @@ if ($_POST) {
 
   /* Construct the order message */
   $order_msg = "
-    <p>
-      Folgende Bestellung ist bei uns eingegangen:
-    </p>
     <style>
       table { border-collapse: collapse; }
       table, th, td { border: 1px solid black; }
