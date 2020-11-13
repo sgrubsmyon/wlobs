@@ -365,9 +365,8 @@ if ($_POST) {
     . "From: Weltladen Bonn <" . $recipient . ">\r\n";
 
   if (
-    true
-    // mail($recipient, "[Bestellung] Nr. " . $bestellung["nr"], $recipient_msg, $headers) &&
-    // mail($visitor_email, "Bestellbestätigung Weltladen Bonn", $visitor_msg, $headers)
+    mail($recipient, "[Bestellung] Nr. " . $bestellung["nr"], $recipient_msg, $headers) &&
+    mail($visitor_email, "Bestellbestätigung Weltladen Bonn", $visitor_msg, $headers)
   ) {
     echo $visitor_response_msg . $order_msg; // . $ps_msg
   } else {
