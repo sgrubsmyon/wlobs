@@ -21,9 +21,11 @@ $artikel = new Artikel($db);
 $groupname = isset($_GET['name']) ? $_GET['name'] : die();
 // read type of product from GET method (if present)
 $typ = isset($_GET['typ']) ? $_GET['typ'] : null;
+// read boolean sortiment_only from GET method (if present)
+$sortiment_only = isset($_GET['sortiment_only']) ? $_GET['sortiment_only'] : true; // read only sortiment by default
 
 // read the details of one product group
-$products = $artikel->read_group($groupname, $typ);
+$products = $artikel->read_group($groupname, $typ, $sortiment_only);
 
 if (is_null($products)) {
   // there was a DB error

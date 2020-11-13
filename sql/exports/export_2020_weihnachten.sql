@@ -1,7 +1,7 @@
 USE kasse;
 
 SELECT DISTINCT
-  "LM", lieferant_name, a.artikel_nr, a.artikel_name,
+  "LM", a.sortiment, lieferant_name, a.artikel_nr, a.artikel_name,
   (CASE
     WHEN (p.toplevel_id = 2 AND p.sub_id = 17 AND p.subsub_id = 3) THEN "Weihnachten"
     WHEN (p.toplevel_id = 3 AND p.sub_id = 2) THEN "Getränke mit Alkohol"
@@ -30,13 +30,14 @@ WHERE
     OR
     p.toplevel_id = 3 -- Getränke
   )
-  AND a.sortiment = TRUE AND a.aktiv = TRUE
+  -- AND a.sortiment = TRUE
+  AND a.aktiv = TRUE
   AND a.variabler_preis = FALSE AND NOT ISNULL(a.vk_preis)
 ORDER BY produktgruppe, REPLACE(a.artikel_name , "\"", "")
 INTO OUTFILE 'artikel_lm.txt';
 
 SELECT DISTINCT
-  "KHW", lieferant_name, a.artikel_nr, a.artikel_name,
+  "KHW", a.sortiment, lieferant_name, a.artikel_nr, a.artikel_name,
   (CASE
     WHEN (p.toplevel_id = 4 AND p.sub_id = 16 AND p.subsub_id = 2) THEN "Weihnachten"
     -- Take default product group name from sub-level:
@@ -63,7 +64,8 @@ WHERE
     OR
     p.toplevel_id = 5 -- Ergänzungsprodukte
   )
-  AND a.sortiment = TRUE AND a.aktiv = TRUE
+  -- AND a.sortiment = TRUE
+  AND a.aktiv = TRUE
   AND a.variabler_preis = FALSE AND NOT ISNULL(a.vk_preis)
 ORDER BY produktgruppe, REPLACE(a.artikel_name , "\"", "")
 INTO OUTFILE 'artikel_khw.txt';

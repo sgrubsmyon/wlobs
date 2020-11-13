@@ -23,7 +23,7 @@ class Artikel {
   function read_all() {
     // select all query
     $query = "SELECT
-        typ, produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
+        typ, sortiment, produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
         vk_preis, pfand, mwst_satz
       FROM " . $this->table_name . "
       ORDER BY produktgruppen_name, REPLACE(artikel_name, \"\\\"\", \"\")";
@@ -51,14 +51,15 @@ class Artikel {
   }
 
   // read products from one product group
-  function read_group($groupname, $typ) {
+  function read_group($groupname, $typ, $sortiment_only) {
     // select group query
     $query = "SELECT
-        typ, produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
+        typ, sortiment, produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
         vk_preis, pfand, mwst_satz
       FROM " . $this->table_name . "
       WHERE produktgruppen_name = ? " .
-      (is_null($typ) ? "" : "AND typ = ?") . "
+      (is_null($typ) ? "" : "AND typ = ? ") .
+      ($sortiment_only ? "AND sortiment = TRUE " : "") . "
       ORDER BY produktgruppen_name, REPLACE(artikel_name, \"\\\"\", \"\")";
 
     // prepare query statement

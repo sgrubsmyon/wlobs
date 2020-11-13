@@ -13,6 +13,7 @@ USE d;
 
 CREATE TABLE artikel (
     typ VARCHAR(3) NOT NULL, -- either "LM" or "KHW"
+    sortiment BOOLEAN NOT NULL DEFAULT FALSE,
     lieferant_name VARCHAR(50) NOT NULL,
     artikel_nr VARCHAR(30) NOT NULL,
     artikel_name VARCHAR(180) NOT NULL,
@@ -22,6 +23,7 @@ CREATE TABLE artikel (
     mwst_satz DECIMAL(6,5) NOT NULL,
     PRIMARY KEY (lieferant_name, artikel_nr),
     INDEX (typ), -- allow fast subsetting to select only LM or KHW
+    INDEX (sortiment), -- allow fast subsetting to select only Sortimentsartikel
     FULLTEXT (artikel_name, artikel_nr) -- allow quick full-text search in artikel_name and artikel_nr
 );
 -- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -37,6 +39,8 @@ CREATE TABLE bestellung_details (
     bestell_nr INTEGER(10) UNSIGNED NOT NULL,
     position SMALLINT(5) UNSIGNED NOT NULL,
     stueckzahl SMALLINT(5) NOT NULL DEFAULT 1,
+    typ VARCHAR(3) NOT NULL, -- either "LM" or "KHW"
+    sortiment BOOLEAN NOT NULL DEFAULT FALSE,
     lieferant_name VARCHAR(50) NOT NULL,
     artikel_nr VARCHAR(30) NOT NULL,
     artikel_name VARCHAR(180) NOT NULL,

@@ -20,7 +20,8 @@ class Bestellung {
     // select all query
     $query = "SELECT
         bestell_nr, bestelldatum,
-        position, lieferant_name, artikel_nr, artikel_name, stueckzahl,
+        position, stueckzahl, typ, sortiment,
+        lieferant_name, artikel_nr, artikel_name,
         ges_preis, ges_pfand, mwst_satz
       FROM " . $this->table_name . "
       INNER JOIN " . $this->table_name ."_details
@@ -62,7 +63,7 @@ class Bestellung {
 
   // retrieve the details of the submitted order from SQL server
   function bestell_details($bestell_nr) {
-    $query = "SELECT position, stueckzahl, lieferant_name, artikel_nr,
+    $query = "SELECT position, stueckzahl, typ, sortiment, lieferant_name, artikel_nr,
         artikel_name, ges_preis, ges_pfand, mwst_satz FROM " . $this->table_name . "_details
       WHERE bestell_nr = ?";
     $stmt = $this->conn->prepare($query);
@@ -117,19 +118,13 @@ class Bestellung {
     }
 
     foreach ($this->details as $item) { // loop over the array of ordered products, sent via POST
-      // Query if all data would be sent via POST:
-      // $query = "INSERT INTO " . $this->table_name . "_details
-      //   SET bestell_nr=:bestell_nr, position=:position, stueckzahl=:stueckzahl,
-      //     lieferant_name=:lieferant_name, artikel_nr=:artikel_nr,
-      //     artikel_name=:artikel_name, ges_preis=:ges_preis, ges_pfand=:ges_pfand, mwst_satz=:mwst_satz";
-
-      // Query if only required data is sent via POST (position, stueckzahl, lieferant_name, artikel_nr):
+      // Only required data is sent via POST (position, stueckzahl, lieferant_name, artikel_nr):
       $query = "INSERT INTO " . $this->table_name . "_details
-          (bestell_nr, position, stueckzahl, lieferant_name, artikel_nr,
+          (bestell_nr, position, stueckzahl, typ, sortiment, lieferant_name, artikel_nr,
           artikel_name, ges_preis, ges_pfand, mwst_satz)
           SELECT
             :bestell_nr, :position, :stueckzahl,
-            lieferant_name, artikel_nr, artikel_name, :stueckzahl * vk_preis,
+            typ, sortiment, lieferant_name, artikel_nr, artikel_name, :stueckzahl * vk_preis,
             :stueckzahl * pfand, mwst_satz
           FROM artikel WHERE lieferant_name = :lieferant_name AND artikel_nr = :artikel_nr";
 
