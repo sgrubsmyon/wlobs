@@ -166,9 +166,9 @@
     </form>
   </div>
   <!-- <script src="https://vuejs.org/js/vue.js"></script> (Development version) -->
-  <script src="lib/vue.js"></script>
+  <!-- <script src="lib/vue.js"></script> -->
   <!-- <script src="https://vuejs.org/js/vue.min.js"></script> (Production version) -->
-  <!-- <script src="lib/vue.min.js"></script> -->
+  <script src="lib/vue.min.js"></script>
   <!-- <script src="https://unpkg.com/vue-select@latest"></script>
   <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css"> -->
   <!-- <script src="lib/vue-select@latest"></script> -->
@@ -529,6 +529,8 @@
           .then(response => {
             let pgl = response.data.records;
             pgl = pgl.filter(pg => pg !== "Bananen");
+            // Put 'Weihnachten' at the top:
+            pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"))
             app.productGroupList.LM = pgl;
           })
           .catch(error => console.log(error));
@@ -540,6 +542,8 @@
           .then(response => {
             let pgl = response.data.records;
             // pgl = pgl.filter(pg => pg !== "Whatever");
+            // Put 'Weihnachten' at the top:
+            pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"))
             app.productGroupList.KHW = pgl;
           })
           .catch(error => console.log(error));
