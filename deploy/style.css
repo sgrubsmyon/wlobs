@@ -185,6 +185,13 @@ input#collapsible {
   border-bottom-left-radius: 0;
 }
 
+/* *************
+   * Hint text *
+   ************* */
+
+.hint {
+  font-size: larger;
+}
 
 /* ********
    * Form *
@@ -553,6 +560,7 @@ button[type='submit'] {
   background-color: lightblue;
 }
 
+.produktimg>div,
 .produktimg>a>div {
   width: 98px;
   height: 98px;
