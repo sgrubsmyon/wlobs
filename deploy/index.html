@@ -89,6 +89,10 @@
       </fieldset>
       
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
+
+      <p class="hint">
+        Für mehr Details zum Produkt auf das Produktbild klicken.
+      </p>
       
       <h3>1. Lebensmittel</h3>
       <fieldset class="elem-group">
@@ -235,73 +239,92 @@
         setImageStyle: function(typ, prod) {
           let art_nr = prod.artikel_nr.trim().toLowerCase();
           let art_nr_alphanum = art_nr.replace(/[^\w]/g, ""); // only keep a-z and 0-9
+          let fallbackURL = 'KeinBild.png';
           let url = '';
+          let imgStyle = function(url) {
+            return "background-image: url('" + url + "');";
+          };
           switch (prod.lieferant_name) {
             case 'El Puente':
               let a = art_nr[0]; // 1st character
               let b = art_nr[1]; // 2nd character
               // Sometimes cache is empty and image is generated only after product page was accessed:
-              let tryurl = "https://shop.el-puente.de/media/catalog/product/cache/image/700x700/e9c3970ab036de70892d86c6d221abfe/" + a + "/" + b + "/" + art_nr_alphanum + ".jpg";
+              url = 'https://shop.el-puente.de/media/catalog/product/cache/image/700x700/e9c3970ab036de70892d86c6d221abfe/' + a + '/' + b + '/' + art_nr_alphanum + '.jpg';
+              prod.imgStyle = imgStyle(url);
               // Also here, sometimes cache is empty, and the above is at least generated when product page is visited (by clicking on image):
-              // "background-image: url('https://shop.el-puente.de/media/catalog/product/cache/thumbnail/130x160/beff4985b56e3afdbeabfc89641a4582/" + a + "/" + b + "/" + art_nr_alphanum + ".jpg');"
-              // Check if image does not exist (cache is empty):
+              // 'background-image: url('https://shop.el-puente.de/media/catalog/product/cache/thumbnail/130x160/beff4985b56e3afdbeabfc89641a4582/' + a + '/' + b + '/' + art_nr_alphanum + '.jpg');'
+              // Check if image does not exist yet (cache is empty):
               let img = new Image();
               img.onerror = () => {
-                // Set empty URL first, replace with actual url later after page was accessed
-                url = '';
                 // Access the El Puente product page so that the image is created in the cache
                 axios.post('access-ep.php', {
-                    url: this.prodURL(typ, prod)
-                  })
-                  .then(response => {
-                    // Try it again:
-                    let img2 = new Image();
-                    img2.onload = () => {
-                      // If OK:
-                      url = tryurl;
-                    }
-                    img2.src = tryurl;
-                  })
-                  .catch(error => console.log(error));
+                  url: this.prodURL(typ, prod)
+                })
+                .then(response => {
+                  // Try it again:
+                  let img2 = new Image();
+                  img2.onerror = () => {
+                    url = fallbackURL;
+                    prod.imgStyle = imgStyle(url);
+                  }
+                  img2.src = url;
+                })
+                .catch(error => { // Product page also not available (e.g. product does not exist any more)
+                  console.log('EP image ' + url + 'could not be loaded, even after accessing product page.');
+                  url = fallbackURL;
+                  prod.imgStyle = imgStyle(url);
+                });
               };
-              img.src = tryurl;
+              img.src = url;
               break;
             case 'WeltPartner':
               url = 'https://shop.weltpartner.de/images/stories/virtuemart/product/resized/' + art_nr + '_380x380.jpg';
+              prod.imgStyle = imgStyle(url);
               break;
             case 'GEPA':
               if (typ == 'LM') {
                 url = 'https://www.gepa-wug.de/wug/bilder/inhalt/food/normal/' + art_nr_alphanum + '.jpg';
+                prod.imgStyle = imgStyle(url);
                 break;
               } else if (typ == 'KHW') {
                 url = 'https://www.gepa-wug.de/wug/bilder/inhalt/klein/' + art_nr_alphanum + '.jpg';
+                prod.imgStyle = imgStyle(url);
                 break;
               }
             case 'Globo':
               if (typ == 'KHW') {
                 url = 'https://www.gepa-wug.de/wug/bilder/inhalt/klein/' + art_nr_alphanum.toUpperCase() + '.jpg';
+                prod.imgStyle = imgStyle(url);
                 break;
               }
             default:
-              url = '';
+              url = fallbackURL;
+              prod.imgStyle = imgStyle(url);
           }
-          prod.imgStyle = "background-image: url('" + url + "');";
+          // Check if image is available and if not: replace with fallback image
+          let img3 = new Image();
+          img3.onerror = function() {
+            console.log('Image '+this.src+' not there.');
+            url = fallbackURL;
+            prod.imgStyle = imgStyle(url);
+          };
+          img3.src = url;
         },
         prodURL: function(typ, prod) {
           let url = '';
           let art_nr = prod.artikel_nr.trim().toLowerCase();
           switch (prod.lieferant_name) {
             case 'El Puente':
-              art_nr = art_nr.replace(/ /g, "-");
+              art_nr = art_nr.replace(/ /g, '-');
               url = 'https://shop.el-puente.de/' + art_nr;
               break;
             case 'WeltPartner':
-              art_nr = art_nr.replace(/ /g, "-");
+              art_nr = art_nr.replace(/ /g, '-');
               art_nr = art_nr.substring(0, 10).toUpperCase();
               url = 'https://shop.weltpartner.de/suche?keyword=' + art_nr;
               break;
             case 'GEPA':
-              let art_nr_alphanum = art_nr.replace(/[^\w]/g, ""); // only keep a-z and 0-9
+              let art_nr_alphanum = art_nr.replace(/[^\w]/g, ''); // only keep a-z and 0-9
               if (typ == 'LM') {
                 url = 'https://www.gepa-wug.de/wug/media/produktpass/' + art_nr_alphanum + '.pdf';
                 break;
@@ -483,8 +506,6 @@
           }
           let anotherPrototype = Object.assign({}, itemPrototype); // create a new copy, no reference
           anotherPrototype.position = currPosition + 1;
-          console.log(itemPrototype);
-          console.log(anotherPrototype);
           this.items[typ].push(anotherPrototype);
         },
         zwischensummen: function(typ) {
