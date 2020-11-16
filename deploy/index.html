@@ -370,6 +370,15 @@
         },
         setProdURL: function(typ, prod) {
           prod.prodURL = this.prodURL(typ, prod);
+        },
+        emojiPG: function(pg, typ) {
+          switch (pg) {
+            case 'Weihnachten':
+              if (typ == 'LM') pg = pg + ' 🍪🍫';
+              else if (typ == 'KHW') pg = pg + ' 🎄🎁';
+              break;
+          }
+          return pg;
         }
       },
       template: `
@@ -377,7 +386,7 @@
           <label v-bind:for="'productgroup'+item.position">Produktgruppe</label>
           <select v-bind:id="'productgroup-'+typ.toLowerCase()+'-'+item.position" v-bind:name="'productgroup-'+typ.toLowerCase()+'-'+item.position" v-model="item.productgroup" v-on:change="updateItemProducts(typ, item.position)" required>
             <option value="" disabled selected>Bitte auswählen...</option>
-            <option v-for="pg in pgl" v-bind:value="pg">{{ pg }}</option>
+            <option v-for="pg in pgl" v-bind:value="pg">{{ emojiPG(pg, typ) }}</option>
           </select>
         </div>
       `
