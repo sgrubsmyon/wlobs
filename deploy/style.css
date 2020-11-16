@@ -224,6 +224,16 @@ fieldset {
   }
 }
 
+#fieldset-lm {
+  background-color: #ffeae3;
+  padding: 10px;
+}
+
+#fieldset-khw {
+  background-color: #d0e6fd;
+  padding: 10px;
+}
+
 .product-selection {
   display: grid;
   align-items: start;
