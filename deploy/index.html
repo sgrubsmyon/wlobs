@@ -90,12 +90,35 @@
       
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
 
+      <h3>Hinweise:</h3>
       <p class="hint">
-        Für mehr Details zum Produkt auf das Produktbild klicken.
+        <ul>
+          <li>Für mehr Details zum Produkt (soweit verfügbar) auf das Produktbild klicken.</li>
+          <li>
+            Die Produkte, die man hier auswählen kann, sind im Sortiment des Weltladens
+            und daher mit einiger Wahrscheinlichkeit vorrätig.
+          </li>
+          <li>
+            Manchmal ist das Bild vom Produkt oder auch die verlinkte Detailseite nicht mehr online.
+            Das muss nicht heißen, dass Sie den Artikel nicht bestellen können.
+            Er kann trotzdem noch im Bonner Weltladen vorrätig sein, auch wenn
+            er nicht mehr beim Importeur bestellt werden kann.
+          </li>
+          <li>
+            Über die hier gezeigten Produkte hinaus können viele weitere Produkte
+            bestellt werden, wenn sie in den Webshops unserer Importorganisationen
+            <a href="https://shop.el-puente.de/">El Puente</a>, <a href="https://www.globo-fairtrade.com/">Globo</a>,
+            <a href="https://shop.weltpartner.de/">WeltPartner</a>, <a href="https://www.gepa-shop.de/">GEPA</a>,
+            <a href="https://www.fairtradecenter.info/">FairTradeCenter Breisgau</a> und
+            <a href="https://www.fridafeeling.de/">Frida Feeling</a> zu finden sind.
+            Schreiben Sie die gewünschten Artikelnummern oder -namen in das Textfeld unten.
+            Es kann dann aber bis zu zwei Wochen dauern, bis das Produkt im Laden ist.
+          </li>
+        </ul>
       </p>
       
-      <h3>1. Lebensmittel</h3>
-      <fieldset class="elem-group">
+      <fieldset class="elem-group" id="fieldset-lm">
+        <h3>1. Lebensmittel</h3>
         <div v-for="item in items.LM" class="product-selection">
           <produktgruppe typ="LM" v-bind:item="item" v-bind:items="items" v-bind:pgl="productGroupList.LM"></produktgruppe>
           <produkt typ="LM" v-bind:item="item" v-bind:curr-formatter="currFormatter"></produkt>
@@ -110,8 +133,8 @@
         </div>
       </fieldset>
 
-      <h3>2. Handwerk</h3>
-      <fieldset class="elem-group">
+      <fieldset class="elem-group" id="fieldset-khw">
+        <h3>2. Handwerk</h3>
         <div v-for="item in items.KHW" class="product-selection">
           <produktgruppe typ="KHW" v-bind:item="item" v-bind:items="items" v-bind:pgl="productGroupList.KHW"></produktgruppe>
           <produkt typ="KHW" v-bind:item="item" v-bind:curr-formatter="currFormatter"></produkt>
@@ -222,8 +245,8 @@
           this.productsInGroupPromise(item.productgroup, typ)
             .then(prods => {
               prods.forEach(prod => {
-                this.setImageStyle(typ, prod)
                 this.setProdURL(typ, prod)
+                this.setImageStyle(typ, prod)
               });
               item.products = prods;
               item.id = "";
@@ -256,23 +279,26 @@
               // Check if image does not exist yet (cache is empty):
               let img = new Image();
               img.onerror = () => {
+                prod.imgStyle = imgStyle(fallbackURL); // trigger a reload of image in any case
                 // Access the El Puente product page so that the image is created in the cache
+                let produrl = prod.prodURL;
                 axios.post('access-ep.php', {
-                  url: this.prodURL(typ, prod)
+                  url: produrl
                 })
                 .then(response => {
                   // Try it again:
                   let img2 = new Image();
                   img2.onerror = () => {
-                    url = fallbackURL;
-                    prod.imgStyle = imgStyle(url);
-                  }
+                    console.log('EP image ' + url + ' could not be loaded, even after accessing product page ' + produrl + '.');
+                  };
+                  img2.onload = () => {
+                    console.log('EP image ' + url + ' is available after accessing product page ' + produrl + ' !!!');
+                    prod.imgStyle = imgStyle(url); // trigger a reload of image
+                  };
                   img2.src = url;
                 })
                 .catch(error => { // Product page also not available (e.g. product does not exist any more)
-                  console.log('EP image ' + url + 'could not be loaded, even after accessing product page.');
-                  url = fallbackURL;
-                  prod.imgStyle = imgStyle(url);
+                  console.log('EP image ' + url + ' could not be loaded because product page ' + produrl + ' is not available.');
                 });
               };
               img.src = url;
@@ -301,14 +327,16 @@
               url = fallbackURL;
               prod.imgStyle = imgStyle(url);
           }
-          // Check if image is available and if not: replace with fallback image
-          let img3 = new Image();
-          img3.onerror = function() {
-            console.log('Image '+this.src+' not there.');
-            url = fallbackURL;
-            prod.imgStyle = imgStyle(url);
-          };
-          img3.src = url;
+          if (prod.lieferant_name != 'El Puente') { // exclude the case where checks have already been made
+            // Check if image is available and if not: replace with fallback image
+            let img3 = new Image();
+            img3.onerror = function() {
+              console.log('Image '+this.src+' not there.');
+              url = fallbackURL;
+              prod.imgStyle = imgStyle(url);
+            };
+            img3.src = url;
+          }
         },
         prodURL: function(typ, prod) {
           let url = '';
