@@ -267,6 +267,7 @@
           let art_nr = prod.artikel_nr.trim().toLowerCase();
           let art_nr_alphanum = art_nr.replace(/[^\w]/g, ""); // only keep a-z and 0-9
           let fallbackURL = 'KeinBild.png';
+          let loadingURL = 'BildLaden.png';
           let url = '';
           let imgStyle = function(url) {
             return "background-image: url('" + url + "');";
@@ -283,7 +284,7 @@
               // Check if image does not exist yet (cache is empty):
               let img = new Image();
               img.onerror = () => {
-                prod.imgStyle = imgStyle(fallbackURL); // trigger a reload of image in any case
+                prod.imgStyle = imgStyle(loadingURL);
                 // Access the El Puente product page so that the image is created in the cache
                 let produrl = prod.prodURL;
                 axios.post('access-ep.php', {
@@ -294,6 +295,7 @@
                   let img2 = new Image();
                   img2.onerror = () => {
                     console.log('EP image ' + url + ' could not be loaded, even after accessing product page ' + produrl + '.');
+                    prod.imgStyle = imgStyle(fallbackURL);
                   };
                   img2.onload = () => {
                     console.log('EP image ' + url + ' is available after accessing product page ' + produrl + ' !!!');
@@ -303,6 +305,7 @@
                 })
                 .catch(error => { // Product page also not available (e.g. product does not exist any more)
                   console.log('EP image ' + url + ' could not be loaded because product page ' + produrl + ' is not available.');
+                  prod.imgStyle = imgStyle(fallbackURL);
                 });
               };
               img.src = url;
