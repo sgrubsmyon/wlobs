@@ -7,8 +7,8 @@ if ($_POST) {
   $visitor_address = "";
   $visitor_message = "";
   $datenschutz = "";
-  $hygiene = "";
-  $lieferung = "";
+  // $hygiene = "";
+  // $lieferung = "";
 
   if (isset($_POST['visitor_name'])) {
     $visitor_name = filter_var($_POST['visitor_name'], FILTER_SANITIZE_STRING);
@@ -37,15 +37,25 @@ if ($_POST) {
     $datenschutz = $_POST['datenschutz'] ? "Ja" : "Nein";
   }
 
-  $hygiene = "Nein";
-  if (isset($_POST['hygiene'])) {
-    $hygiene = $_POST['hygiene'] ? "Ja" : "Nein";
-  }
+  // $hygiene = "Nein";
+  // if (isset($_POST['hygiene'])) {
+  //   $hygiene = $_POST['hygiene'] ? "Ja" : "Nein";
+  // }
+  // In Bestelldaten:
+  // <tr>
+  //   <th>Zustimmung zur Einhaltung der Hygieneregeln?</th>
+  //   <td>" . $hygiene . "</td>
+  // </tr>
 
-  $lieferung = "Nein";
-  if (isset($_POST['lieferung'])) {
-    $lieferung = $_POST['lieferung'] ? "Ja" : "Nein";
-  }
+  // $lieferung = "Nein";
+  // if (isset($_POST['lieferung'])) {
+  //   $lieferung = $_POST['lieferung'] ? "Ja" : "Nein";
+  // }
+  // In Bestelldaten:
+  // <tr>
+  //   <th>Lieferung erforderlich?</th>
+  //   <td>" . $lieferung . "</td>
+  // </tr>
 
   /* Process data to be sent to API from POST request (form submit) */
   $data = array('details' => array());
@@ -182,14 +192,6 @@ if ($_POST) {
           <tr>
             <th>Zustimmung zur Verwendung meiner Daten?</th>
             <td>" . $datenschutz . "</td>
-          </tr>
-          <tr>
-            <th>Zustimmung zur Einhaltung der Hygieneregeln?</th>
-            <td>" . $hygiene . "</td>
-          </tr>
-          <tr>
-            <th>Lieferung erforderlich?</th>
-            <td>" . $lieferung . "</td>
           </tr>
         </tbody>
       </table>
