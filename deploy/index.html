@@ -24,13 +24,19 @@
     </h1>
     <!-- <h2>Wir haben wieder regulär geöffnet, dieses Bestellformular steht Ihnen jedoch weiterhin zur Verfügung.</h2> -->
     <h2>Hier können Sie Produkte bestellen und dann beim Weltladen abholen.</h2>
-    <!-- XXX Im neuen Jahr löschen: -->
     <p>
-      Bis zum 23.12. können dieses Jahr noch bestellte Waren abgeholt werden.
-      Wir werden dieses Jahr nicht mehr beliefert, der Laden ist jedoch noch gut gefüllt.
-      Daher können Sie das, was aktuell im Laden ist, noch vor Weihnachten bekommen.
-      Teilen Sie uns gerne mit, was Sie kaufen möchten, und wir melden uns dann bei Ihnen und
-      klären, was noch da ist und wann Sie es abholen können.
+      Liebe Kundinnen und Kunden,
+    </p>
+    <p>
+      <!-- XXX Ggf. ändern: -->
+      ab dem 4.1.2021 sind wir gerne im Rahmen des Möglichen wieder für Sie da!
+      Nutzen Sie dieses Formular, um uns Ihre Wünsche mitzuteilen.
+      Produkte auf Lager können Sie meist schon am nächsten Werktag abholen –
+      wir nennen Ihnen Tag und Uhrzeit, sobald die Bestellung bearbeitet ist.
+      Bei Produkten, die wir für Sie noch bestellen müssen, melden wir uns mit dem
+      voraussichtlichen Lieferdatum.
+      Sobald der Lockdown vorbei ist (11.1. oder später), werden wir zu den gewohnten
+      Öffnungszeiten wieder für Sie da sein.
     </p>
     <!-- Collapsible: https://alligator.io/css/collapsible/ -->
     <div class="wrap-collabsible">
@@ -89,10 +95,12 @@
         <label for="phone">Telefonnummer*</label>
         <input type="text" id="phone" name="visitor_phone" placeholder="0228/12345678" pattern="[+0-9 /\-]{3,30}" required>
       </fieldset>
-      <fieldset class="elem-group">
-        <label for="address">Adresse</label>
-        <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}" v-bind:required="lieferung_required">
-      </fieldset>
+      <!--
+        <fieldset class="elem-group">
+          <label for="address">Adresse</label>
+          <input type="text" id="address" name="visitor_address" placeholder="Max-Mustermann-Straße 12, 53123 Bonn" pattern="[\w\s.,\-\(\)/&+\*]{5,100}" v-bind:required="lieferung_required">
+        </fieldset>
+      -->
       
       <h2>Ich möchte folgende Produkte bestellen (vorbehaltlich Lieferbarkeit):</h2>
 
@@ -101,10 +109,9 @@
         <ul>
           <li>Für mehr Details zum Produkt (soweit verfügbar) auf das Produktbild klicken.</li>
           <li>
-            Die Produkte, die man hier auswählen kann, sind im Sortiment des Weltladens
+            Die gelisteten Produkte sind im Sortiment des Weltladens
             und daher mit einiger Wahrscheinlichkeit vorrätig.
-            <!-- XXX Im neuen Jahr löschen: -->
-            Nicht vorrätige Ware kann erst im Januar abgeholt werden.
+            Nicht vorrätige Ware kann erst nach 1&ndash;2 Wochen abgeholt werden.
           </li>
           <li>
             Manchmal ist das Bild vom Produkt oder auch die verlinkte Detailseite nicht mehr online.
