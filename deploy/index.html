@@ -548,8 +548,8 @@
           KHW: []
         },
         items: {
-          LM: [Object.assign({}, itemPrototype)], // create a new copy, no reference
-          KHW: [Object.assign({}, itemPrototype)] // create a new copy, no reference
+          LM: [], // start with empty list, in order to not enforce that a product of each type must be chosen
+          KHW: [] // start with empty list, in order to not enforce that a product of each type must be chosen
         },
         lieferung_required: false,
         currFormatter: Intl.NumberFormat('de-DE', {
