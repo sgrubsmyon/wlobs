@@ -29,14 +29,14 @@
     </p>
     <p>
       <!-- XXX Ggf. ändern: -->
-      ab dem 4.1.2021 sind wir gerne im Rahmen des Möglichen wieder für Sie da!
+      seit dem 4.1.2021 sind wieder Bestellungen und Abholungen am Laden möglich!
       Nutzen Sie dieses Formular, um uns Ihre Wünsche mitzuteilen.
       Produkte auf Lager können Sie meist schon am nächsten Werktag abholen –
       wir nennen Ihnen Tag und Uhrzeit, sobald die Bestellung bearbeitet ist.
       Bei Produkten, die wir für Sie noch bestellen müssen, melden wir uns mit dem
       voraussichtlichen Lieferdatum.
-      Sobald der Lockdown vorbei ist (11.1. oder später), werden wir zu den gewohnten
-      Öffnungszeiten wieder für Sie da sein.
+      Sobald der Lockdown vorbei ist, werden wir zu den gewohnten Öffnungszeiten
+      wieder für Sie da sein.
     </p>
     <!-- Collapsible: https://alligator.io/css/collapsible/ -->
     <div class="wrap-collabsible">
@@ -407,6 +407,11 @@
               if (typ == 'LM') pg = pg + ' 🍪🍫';
               else if (typ == 'KHW') pg = pg + ' 🎄🎁';
               break;
+            case 'Ostern':
+              pg = pg + ' 🥚🐇';
+              break;
+            case 'Saatgut':
+              pg = pg + ' 🌱🍆';
           }
           return pg;
         }
@@ -617,10 +622,25 @@
           .then(response => {
             let pgl = response.data.records;
             pgl = pgl.filter(pg => pg !== "Bananen");
+            
             // // Put 'Weihnachten' at the top:
             // pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"))
-            // Remove 'Weihnachten':
-            pgl = pgl.filter(pg => pg !== "Weihnachten");
+
+            // // Remove 'Weihnachten':
+            // pgl = pgl.filter(pg => pg !== "Weihnachten");
+
+            // Put 'Ostern' at the top:
+            pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"))
+
+            // Put 'Saatgut' at the very top:
+            pgl = ['Saatgut'].concat(pgl.filter(pg => pg !== "Saatgut"))
+
+            // // Remove 'Saatgut':
+            // pgl = pgl.filter(pg => pg !== "Saatgut");
+
+            // // Remove 'Ostern':
+            // pgl = pgl.filter(pg => pg !== "Ostern");
+
             app.productGroupList.LM = pgl;
           })
           .catch(error => console.log(error));
@@ -631,11 +651,20 @@
           })
           .then(response => {
             let pgl = response.data.records;
-            // // pgl = pgl.filter(pg => pg !== "Whatever");
+            // pgl = pgl.filter(pg => pg !== "Whatever");
+
             // // Put 'Weihnachten' at the top:
             // pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"));
-            // Remove 'Weihnachten':
-            pgl = pgl.filter(pg => pg !== "Weihnachten");
+
+            // // Remove 'Weihnachten':
+            // pgl = pgl.filter(pg => pg !== "Weihnachten");
+
+            // Put 'Ostern' at the top:
+            pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"));
+
+            // // Remove 'Ostern':
+            // pgl = pgl.filter(pg => pg !== "Ostern");
+            
             app.productGroupList.KHW = pgl;
           })
           .catch(error => console.log(error));
