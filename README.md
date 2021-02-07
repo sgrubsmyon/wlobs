@@ -75,6 +75,26 @@ sudo mysqldump --databases d --add-drop-database -r d_new.sql
 
 Log into your hoster's DB management system and import the new DB SQL file `d_new.sql`.
 
+#### Put wlobs site back into production mode
+
+Log into FTP server with Filezilla. Rename `index.html` back to `index.maintenance.html`
+and `index.production.html` back to `index.html`.
+
+Rename directory `api.deactivated` back to `api`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Outdated: Ubuntu 16.04
 
 ### First deployment
@@ -111,8 +131,17 @@ sudo cp -i /var/lib/mysql-files/artikel_khw.txt .
 mysql -hlocalhost -uroot -p -e "source sql/update_article_table.sql"
 ```
 
+
+
+
+
+
+
+
 ## Deploy locally for testing
 
 ```
 sudo rsync -rtlPvi --delete --exclude=.*.sw* deploy/* /var/www/html/wlobs/ && sudo chown -R http:http /var/www/html/wlobs/
 ```
+
+Need to start the `nginx` and `php-fpm` system services before visiting http://localhost/wlobs.
