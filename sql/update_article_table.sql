@@ -1,7 +1,7 @@
 USE d;
 
 /* ********************************************************************************** */
-/* This nly has to be done once for transition from old (no KHW) to new system (with KHW) */
+/* This only has to be done once for transition from old (no KHW) to new system (with KHW) */
 -- DROP TABLE artikel;
 -- CREATE TABLE artikel (
 --     typ VARCHAR(3) NOT NULL, -- either "LM" or "KHW"
