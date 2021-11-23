@@ -619,17 +619,19 @@
             let pgl = response.data.records;
             pgl = pgl.filter(pg => pg !== "Bananen");
             
-            // // Put 'Weihnachten' at the top:
-            // pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"))
+            // Put 'Weihnachten' at the top:
+            pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"))
 
             // // Remove 'Weihnachten':
             // pgl = pgl.filter(pg => pg !== "Weihnachten");
 
-            // Put 'Ostern' at the top:
-            pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"))
+            // --------------------------------------------------
 
-            // Put 'Saatgut' at the very top:
-            pgl = ['Saatgut'].concat(pgl.filter(pg => pg !== "Saatgut"))
+            // // Put 'Ostern' at the top:
+            // pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"))
+
+            // // Put 'Saatgut' at the very top:
+            // pgl = ['Saatgut'].concat(pgl.filter(pg => pg !== "Saatgut"))
 
             // // Remove 'Saatgut':
             // pgl = pgl.filter(pg => pg !== "Saatgut");
@@ -649,14 +651,16 @@
             let pgl = response.data.records;
             // pgl = pgl.filter(pg => pg !== "Whatever");
 
-            // // Put 'Weihnachten' at the top:
-            // pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"));
+            // Put 'Weihnachten' at the top:
+            pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"));
 
             // // Remove 'Weihnachten':
             // pgl = pgl.filter(pg => pg !== "Weihnachten");
 
-            // Put 'Ostern' at the top:
-            pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"));
+            // --------------------------------------------------
+
+            // // Put 'Ostern' at the top:
+            // pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"));
 
             // // Remove 'Ostern':
             // pgl = pgl.filter(pg => pg !== "Ostern");
