@@ -71,19 +71,19 @@ GRANT INSERT ON d.bestellung TO 'u'@'localhost';
 GRANT INSERT ON d.bestellung_details TO 'u'@'localhost';
 -- GRANT INSERT, DELETE ON d.bestellung_secret TO 'u'@'localhost';
 
-LOAD DATA LOCAL INFILE 'artikel_lm.txt' INTO TABLE artikel_lm;
-LOAD DATA LOCAL INFILE 'artikel_khw.txt' INTO TABLE artikel_khw;
+LOAD DATA LOCAL INFILE 'artikel_lm.txt' INTO TABLE artikel;
+LOAD DATA LOCAL INFILE 'artikel_khw.txt' INTO TABLE artikel;
 
 -- After DB has been created: when articles in Weltladenkasse change, export
 -- again with sql_export.sql and update this DB with new article list: (as user 'root')
 
--- DELETE FROM artikel_lm;
--- LOAD DATA LOCAL INFILE 'artikel_lm.txt' INTO TABLE artikel_lm;
+-- DELETE FROM artikel;
+-- LOAD DATA LOCAL INFILE 'artikel_lm.txt' INTO TABLE artikel;
 
 -- or:
 -- Create a table only dump containing drop table instruction:
 --
--- mysqldump -umyuser -p mydb artikel_lm -r artikel_lm.sql
+-- mysqldump -umyuser -p mydb artikel -r artikel_lm.sql
 --
 -- May need to add 'USE mydb;' statement in the beginning if phpmyadmin
 -- complains. Import the file with phpmyadmin into the DB.
