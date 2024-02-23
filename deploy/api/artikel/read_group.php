@@ -4,11 +4,11 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: access");
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Credentials: true");
-header('Content-Type: application/json');
+header("Content-Type: application/json");
 
 // include database and object files
-include_once '../config/database.php';
-include_once '../objects/artikel.php';
+include_once "../config/database.php";
+include_once "../objects/artikel.php";
 
 // instantiate database and artikel object
 $database = new Database();
@@ -18,11 +18,11 @@ $db = $database->getConnection();
 $artikel = new Artikel($db);
 
 // read name of product group from GET method
-$groupname = isset($_GET['name']) ? $_GET['name'] : die();
+$groupname = isset($_GET["name"]) ? $_GET["name"] : die();
 // read type of product from GET method (if present)
-$typ = isset($_GET['typ']) ? $_GET['typ'] : null;
+$typ = isset($_GET["typ"]) ? $_GET["typ"] : null;
 // read boolean sortiment_only from GET method (if present)
-$sortiment_only = isset($_GET['sortiment_only']) ? $_GET['sortiment_only'] : true; // read only sortiment by default
+$sortiment_only = isset($_GET["sortiment_only"]) ? $_GET["sortiment_only"] : true; // read only sortiment by default
 
 // read the details of one product group
 $products = $artikel->read_group($groupname, $typ, $sortiment_only);
@@ -56,4 +56,3 @@ if (is_null($products)) {
     "records" => $products
   ));
 }
-?>
