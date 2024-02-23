@@ -1,5 +1,59 @@
 # Weltladen Online-Bestell-System (wlobs)
 
+## On live production server running the Weltladenkasse DB `kasse`
+
+### Update existing wlobs DB
+
+#### Clone the git repo (once)
+
+```
+cd ~
+git clone https://github.com/sgrubsmyon/wlobs
+```
+
+#### Update git repo
+
+```
+cd ~/wlobs
+git pull
+```
+
+#### Export current data from Weltladenkasse DB `kasse`
+
+```
+cd ~/wlobs
+sudo mysql -e "source sql/export.sql"
+sudo mv -i /var/lib/mysql/kasse/artikel_lm.txt .
+sudo mv -i /var/lib/mysql/kasse/artikel_khw.txt .
+```
+
+#### Upload txt files to the server with `ncftp`
+
+```
+ncftpput -R -v -u <username> -p <password> ftp.example.org /wlobs/ artikel_lm.txt artikel_khw.txt
+```
+
+#### Run php script on wlobs server to update the wlobs database in place
+
+```
+curl https://my.domain.org/api/artikel/update_from_txt_files.php?token=abc
+```
+
+#### Do all this in one step automatically
+
+Run the shell script (as root)
+
+```
+/root/update_wlobs_db.sh
+```
+
+You can create a cronjob for it to be run regularly.
+
+
+
+
+
+
 ## Arch Linux/Manjaro
 
 ### First deployment
@@ -32,7 +86,7 @@ mysql --local-infile -hlocalhost -ukassenadmin -p -e "source DB_Dump_kasse_XX.sq
 #### Export data from Weltladenkasse DB `kasse`
 
 ```
-sudo mysql -e "source sql/exports/export_XXX.sql"
+sudo mysql -e "source sql/export.sql"
 sudo mv -i /var/lib/mysql/kasse/artikel_lm.txt .
 sudo mv -i /var/lib/mysql/kasse/artikel_khw.txt .
 ```
