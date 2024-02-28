@@ -195,7 +195,11 @@ mysql -hlocalhost -uroot -p -e "source sql/update_article_table.sql"
 ## Deploy locally for testing
 
 ```
-sudo rsync -rtlPvi --delete --exclude=.*.sw* deploy/* /var/www/html/wlobs/ && sudo chown -R http:http /var/www/html/wlobs/
+sudo rsync -rtlPvi config/config.ini /var/www/html/wlobs/
 ```
 
-Need to start the `nginx` and `php-fpm` system services before visiting http://localhost/wlobs.
+```
+sudo rsync -rtlPvi --delete --exclude=.*.sw* deploy/* /var/www/html/wlobs/a/s/ && sudo chown -R www-data:www-data /var/www/html/wlobs/
+```
+
+Need to start the `nginx` and `php-fpm` system services before visiting http://localhost/wlobs/a/s/.
