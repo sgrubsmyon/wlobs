@@ -628,17 +628,22 @@
       },
       mounted: function() {
         // Get current date in order to determine whether seasonal products should be displayed
-        const date = new Date('2024-01-06');
+        const date = new Date();
 
         // Define time when Christmas products should be displayed:
         const christmas_start = new Date(`${date.getFullYear()}-11-12`); // start one day after St. Martin (November 12th)
         const christmas_end = new Date(`${date.getFullYear()}-01-07`); // end one day after Epiphany (January 7th)
         
+        // Define time when Easter products should be displayed:
         const easter_date = easter(date.getFullYear());
         const easter_start = new Date(easter_date);
         easter_start.setDate(easter_start.getDate() - 46); // start 46 days before Easter Sunday (on Ash Wednesday)
         const easter_end = new Date(easter_date); // end two days after Easter Sunday (Tuesday after Easter)
         easter_end.setDate(easter_end.getDate() + 2); // start 45 days before Easter Sunday (one day after Ash Wednesday)
+
+        // Define time when seed products should be displayed:
+        const seed_start = new Date(`${date.getFullYear()}-02-01`); // start of the gardener's year (February 1st)
+        const seed_end = new Date(`${date.getFullYear()}-05-01`); // end of the seeding season (May 1st)
 
         axios.get('api/produktgruppe/read_all.php', {
             params: {
@@ -669,11 +674,13 @@
 
             // --------------------------------------------------
 
-            // // Put 'Saatgut' at the very top:
-            // pgl = ['Saatgut'].concat(pgl.filter(pg => pg !== "Saatgut"))
-
-            // // Remove 'Saatgut':
-            // pgl = pgl.filter(pg => pg !== "Saatgut");
+            if (date > seed_start && date < seed_end) {
+              // Put 'Saatgut' at the very top:
+              pgl = ['Saatgut'].concat(pgl.filter(pg => pg !== "Saatgut"))
+            } else {
+              // Remove 'Saatgut':
+              pgl = pgl.filter(pg => pg !== "Saatgut");
+            }
 
             app.productGroupList.LM = pgl;
           })
