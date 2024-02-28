@@ -228,6 +228,23 @@
   <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
   <script src="lib/axios.min.js"></script>
   <script>
+    function easter(year) {
+      // https://www.irt.org/articles/js052/index.htm
+      var century = Math.floor(year / 100);
+      var N = year - 19 * Math.floor(year/19);
+      var K = Math.floor((century - 17) / 25);
+      var I = century - Math.floor(century / 4) - Math.floor((century - K) / 3) + 19 * N + 15;
+      I = I - 30 * Math.floor((I / 30));
+      I = I - Math.floor(I / 28) * (1 - Math.floor(I / 28) * Math.floor(29 / (I + 1)) * Math.floor((21 - N) / 11));
+      var J = year + Math.floor(year / 4) + I + 2 - century + Math.floor(century / 4);
+      J = J - 7 * Math.floor(J / 7);
+      var L = I - J;
+      var month = 3 + Math.floor((L + 40) / 44);
+      var day = L + 28 - 31 * Math.floor(month / 4);
+
+      return new Date(`${year}-${month}-${day}`);
+    }
+
     window.onload = function() {
       // Collapsible: https://alligator.io/css/collapsible/
       let myLabels = document.querySelectorAll('.lbl-toggle');
@@ -610,6 +627,19 @@
         }
       },
       mounted: function() {
+        // Get current date in order to determine whether seasonal products should be displayed
+        const date = new Date('2024-01-06');
+
+        // Define time when Christmas products should be displayed:
+        const christmas_start = new Date(`${date.getFullYear()}-11-12`); // start one day after St. Martin (November 12th)
+        const christmas_end = new Date(`${date.getFullYear()}-01-07`); // end one day after Epiphany (January 7th)
+        
+        const easter_date = easter(date.getFullYear());
+        const easter_start = new Date(easter_date);
+        easter_start.setDate(easter_start.getDate() - 46); // start 46 days before Easter Sunday (on Ash Wednesday)
+        const easter_end = new Date(easter_date); // end two days after Easter Sunday (Tuesday after Easter)
+        easter_end.setDate(easter_end.getDate() + 2); // start 45 days before Easter Sunday (one day after Ash Wednesday)
+
         axios.get('api/produktgruppe/read_all.php', {
             params: {
               typ: "LM"
@@ -619,25 +649,31 @@
             let pgl = response.data.records;
             pgl = pgl.filter(pg => pg !== "Bananen");
             
-            // Put 'Weihnachten' at the top:
-            pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"))
-
-            // // Remove 'Weihnachten':
-            // pgl = pgl.filter(pg => pg !== "Weihnachten");
+            if (date < christmas_end || date > christmas_start) {
+              // Put 'Weihnachten' at the top:
+              pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"));
+            } else {
+              // Remove 'Weihnachten':
+              pgl = pgl.filter(pg => pg !== "Weihnachten");
+            }
 
             // --------------------------------------------------
 
-            // // Put 'Ostern' at the top:
-            // pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"))
+            if (date > easter_start && date < easter_end) {
+              // Put 'Ostern' at the top:
+              pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"));
+            } else {
+              // Remove 'Ostern':
+              pgl = pgl.filter(pg => pg !== "Ostern");
+            }
+
+            // --------------------------------------------------
 
             // // Put 'Saatgut' at the very top:
             // pgl = ['Saatgut'].concat(pgl.filter(pg => pg !== "Saatgut"))
 
             // // Remove 'Saatgut':
             // pgl = pgl.filter(pg => pg !== "Saatgut");
-
-            // // Remove 'Ostern':
-            // pgl = pgl.filter(pg => pg !== "Ostern");
 
             app.productGroupList.LM = pgl;
           })
@@ -649,22 +685,25 @@
           })
           .then(response => {
             let pgl = response.data.records;
-            // pgl = pgl.filter(pg => pg !== "Whatever");
 
-            // Put 'Weihnachten' at the top:
-            pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"));
-
-            // // Remove 'Weihnachten':
-            // pgl = pgl.filter(pg => pg !== "Weihnachten");
+            if (date < christmas_end || date > christmas_start) {
+              // Put 'Weihnachten' at the top:
+              pgl = ['Weihnachten'].concat(pgl.filter(pg => pg !== "Weihnachten"));
+            } else {
+              // Remove 'Weihnachten':
+              pgl = pgl.filter(pg => pg !== "Weihnachten");
+            }
 
             // --------------------------------------------------
 
-            // // Put 'Ostern' at the top:
-            // pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"));
+            if (date > easter_start && date < easter_end) {
+              // Put 'Ostern' at the top:
+              pgl = ['Ostern'].concat(pgl.filter(pg => pg !== "Ostern"));
+            } else {
+              // Remove 'Ostern':
+              pgl = pgl.filter(pg => pg !== "Ostern");
+            }
 
-            // // Remove 'Ostern':
-            // pgl = pgl.filter(pg => pg !== "Ostern");
-            
             app.productGroupList.KHW = pgl;
           })
           .catch(error => console.log(error));
