@@ -5,14 +5,14 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 $data = json_decode(file_get_contents("php://input"));
 if (!empty($data)) {
-  if (!empty($data->url)) {
-    $result = file_get_contents($data->url);
-    if (FALSE === $result) {
+  if (!empty($data->art_nr)) {
+    $response = file_get_contents("https://www.el-puente.de/search/ajax/suggest/?q=" . $data->art_nr);
+    if (FALSE === $response) {
       http_response_code(503); // Server error
       echo json_encode(array("message" => "Unable to load EP page."));
     } else {
       http_response_code(200); // OK
-      echo json_encode(array("message" => "EP page was loaded, image should now be in cache."));
+      echo $response;
     }
   } else {
     http_response_code(400); // Bad request
