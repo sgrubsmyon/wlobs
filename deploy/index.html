@@ -264,6 +264,49 @@
 
     Vue.config.ignoredElements = [/^ion-/];
     
+    function imgStyle(url) {
+      return "background-image: url('" + url + "');";
+    };
+
+    function loadProdImageFromElPuente(prod, art_nr, art_nr_alphanum, fallback_url, loading_url) {
+      let a = art_nr[0]; // 1st character
+      let b = art_nr[1]; // 2nd character
+      // Sometimes cache is empty and image is generated only after product page was accessed:
+      let url = 'https://shop.el-puente.de/media/catalog/product/cache/image/700x700/e9c3970ab036de70892d86c6d221abfe/' + a + '/' + b + '/' + art_nr_alphanum + '.jpg';
+      prod.imgStyle = imgStyle(url);
+      // Also here, sometimes cache is empty, and the above is at least generated when product page is visited (by clicking on image):
+      // 'background-image: url('https://shop.el-puente.de/media/catalog/product/cache/thumbnail/130x160/beff4985b56e3afdbeabfc89641a4582/' + a + '/' + b + '/' + art_nr_alphanum + '.jpg');'
+      // Check if image does not exist yet (cache is empty):
+      let img = new Image();
+      img.onerror = () => {
+        prod.imgStyle = imgStyle(loading_url);
+        // Access the El Puente product page so that the image is created in the cache
+        let produrl = prod.prodURL;
+        axios.post('access-ep.php', {
+          url: produrl
+        })
+        .then(response => {
+          // Try it again:
+          let img2 = new Image();
+          img2.onerror = () => {
+            console.log('EP image ' + url + ' could not be loaded, even after accessing product page ' + produrl + '.');
+            prod.imgStyle = imgStyle(fallback_url);
+          };
+          img2.onload = () => {
+            console.log('EP image ' + url + ' is available after accessing product page ' + produrl + ' !!!');
+            prod.imgStyle = imgStyle(url); // trigger a reload of image
+          };
+          img2.src = url;
+        })
+        .catch(error => { // Product page also not available (e.g. product does not exist any more)
+          console.log('EP image ' + url + ' could not be loaded because product page ' + produrl + ' is not available.');
+          prod.imgStyle = imgStyle(fallback_url);
+        });
+      };
+      img.src = url;
+      return url;
+    }
+
     // Define a new component
     Vue.component('produktgruppe', {
       props: ['typ', 'item', 'items', 'pgl'],
@@ -302,49 +345,12 @@
         setImageStyle: function(typ, prod) {
           let art_nr = prod.artikel_nr.trim().toLowerCase();
           let art_nr_alphanum = art_nr.replace(/[^\w]/g, ""); // only keep a-z and 0-9
-          let fallbackURL = 'KeinBild.png';
-          let loadingURL = 'BildLaden.png';
+          let fallback_url = 'KeinBild.png';
+          let loading_url = 'BildLaden.png';
           let url = '';
-          let imgStyle = function(url) {
-            return "background-image: url('" + url + "');";
-          };
           switch (prod.lieferant_name) {
             case 'El Puente':
-              let a = art_nr[0]; // 1st character
-              let b = art_nr[1]; // 2nd character
-              // Sometimes cache is empty and image is generated only after product page was accessed:
-              url = 'https://shop.el-puente.de/media/catalog/product/cache/image/700x700/e9c3970ab036de70892d86c6d221abfe/' + a + '/' + b + '/' + art_nr_alphanum + '.jpg';
-              prod.imgStyle = imgStyle(url);
-              // Also here, sometimes cache is empty, and the above is at least generated when product page is visited (by clicking on image):
-              // 'background-image: url('https://shop.el-puente.de/media/catalog/product/cache/thumbnail/130x160/beff4985b56e3afdbeabfc89641a4582/' + a + '/' + b + '/' + art_nr_alphanum + '.jpg');'
-              // Check if image does not exist yet (cache is empty):
-              let img = new Image();
-              img.onerror = () => {
-                prod.imgStyle = imgStyle(loadingURL);
-                // Access the El Puente product page so that the image is created in the cache
-                let produrl = prod.prodURL;
-                axios.post('access-ep.php', {
-                  url: produrl
-                })
-                .then(response => {
-                  // Try it again:
-                  let img2 = new Image();
-                  img2.onerror = () => {
-                    console.log('EP image ' + url + ' could not be loaded, even after accessing product page ' + produrl + '.');
-                    prod.imgStyle = imgStyle(fallbackURL);
-                  };
-                  img2.onload = () => {
-                    console.log('EP image ' + url + ' is available after accessing product page ' + produrl + ' !!!');
-                    prod.imgStyle = imgStyle(url); // trigger a reload of image
-                  };
-                  img2.src = url;
-                })
-                .catch(error => { // Product page also not available (e.g. product does not exist any more)
-                  console.log('EP image ' + url + ' could not be loaded because product page ' + produrl + ' is not available.');
-                  prod.imgStyle = imgStyle(fallbackURL);
-                });
-              };
-              img.src = url;
+              url = loadProdImageFromElPuente(prod, art_nr, art_nr_alphanum, fallback_url, loading_url);
               break;
             case 'WeltPartner':
               url = 'https://shop.weltpartner.de/images/stories/virtuemart/product/resized/' + art_nr + '_380x380.jpg';
@@ -367,7 +373,7 @@
                 break;
               }
             default:
-              url = fallbackURL;
+              url = fallback_url;
               prod.imgStyle = imgStyle(url);
           }
           if (prod.lieferant_name != 'El Puente') { // exclude the case where checks have already been made
@@ -375,7 +381,7 @@
             let img3 = new Image();
             img3.onerror = function() {
               console.log('Image '+this.src+' not there.');
-              url = fallbackURL;
+              url = fallback_url;
               prod.imgStyle = imgStyle(url);
             };
             img3.src = url;
