@@ -24,7 +24,7 @@ class Artikel {
     // select all query
     $query = "SELECT
         typ, sortiment, produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
-        vk_preis, pfand, mwst_satz
+        vk_preis, pfand, mwst_satz, menge, einheit, herkunft
       FROM " . $this->table_name . "
       ORDER BY produktgruppen_name, REPLACE(artikel_name, \"\\\"\", \"\")";
 
@@ -55,7 +55,7 @@ class Artikel {
     // select group query
     $query = "SELECT
         typ, sortiment, produktgruppen_name, lieferant_name, artikel_nr, artikel_name,
-        vk_preis, pfand, mwst_satz
+        vk_preis, pfand, mwst_satz, menge, einheit, herkunft
       FROM " . $this->table_name . "
       WHERE produktgruppen_name = ? " .
       (is_null($typ) ? "" : "AND typ = ? ") .
