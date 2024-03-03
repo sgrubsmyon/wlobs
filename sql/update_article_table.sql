@@ -68,25 +68,25 @@ USE d;
 
 /* ********************************************************************************** */
 /* This only has to be done once for transition to extension of artikel table with menge, einheit, herkunft */
-DROP TABLE artikel;
-CREATE TABLE artikel (
-    typ VARCHAR(3) NOT NULL, -- either "LM" or "KHW"
-    sortiment BOOLEAN NOT NULL DEFAULT FALSE,
-    lieferant_name VARCHAR(50) NOT NULL,
-    artikel_nr VARCHAR(30) NOT NULL,
-    artikel_name VARCHAR(180) NOT NULL,
-    produktgruppen_name VARCHAR(50) NOT NULL,
-    vk_preis DECIMAL(13,2) NOT NULL,
-    pfand DECIMAL(13,2) DEFAULT NULL,
-    mwst_satz DECIMAL(6,5) NOT NULL,
-    menge DECIMAL(8,5) DEFAULT NULL,
-    einheit VARCHAR(10) DEFAULT NULL,
-    herkunft VARCHAR(100) DEFAULT NULL,
-    PRIMARY KEY (lieferant_name, artikel_nr),
-    INDEX (typ), -- allow fast subsetting to select only LM or KHW
-    INDEX (sortiment), -- allow fast subsetting to select only Sortimentsartikel
-    FULLTEXT (artikel_name, artikel_nr) -- allow quick full-text search in artikel_name and artikel_nr
-);
+-- DROP TABLE artikel;
+-- CREATE TABLE artikel (
+--     typ VARCHAR(3) NOT NULL, -- either "LM" or "KHW"
+--     sortiment BOOLEAN NOT NULL DEFAULT FALSE,
+--     lieferant_name VARCHAR(50) NOT NULL,
+--     artikel_nr VARCHAR(30) NOT NULL,
+--     artikel_name VARCHAR(180) NOT NULL,
+--     produktgruppen_name VARCHAR(50) NOT NULL,
+--     vk_preis DECIMAL(13,2) NOT NULL,
+--     pfand DECIMAL(13,2) DEFAULT NULL,
+--     mwst_satz DECIMAL(6,5) NOT NULL,
+--     menge DECIMAL(8,5) DEFAULT NULL,
+--     einheit VARCHAR(10) DEFAULT NULL,
+--     herkunft VARCHAR(100) DEFAULT NULL,
+--     PRIMARY KEY (lieferant_name, artikel_nr),
+--     INDEX (typ), -- allow fast subsetting to select only LM or KHW
+--     INDEX (sortiment), -- allow fast subsetting to select only Sortimentsartikel
+--     FULLTEXT (artikel_name, artikel_nr) -- allow quick full-text search in artikel_name and artikel_nr
+-- );
 /* ********************************************************************************** */
 
 DELETE FROM artikel;
