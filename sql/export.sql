@@ -12,7 +12,8 @@ SELECT DISTINCT
     WHEN (p.sub_id IS NOT NULL) THEN (SELECT produktgruppen_name FROM produktgruppe WHERE toplevel_id = p.toplevel_id AND sub_id = p.sub_id AND ISNULL(subsub_id))
     ELSE produktgruppen_name
   END) AS produktgruppe,
-  a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz
+  a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz,
+  a.menge, a.einheit, a.herkunft
 FROM artikel AS a
 INNER JOIN lieferant USING (lieferant_id)
 INNER JOIN produktgruppe AS p USING (produktgruppen_id)
@@ -49,7 +50,8 @@ SELECT DISTINCT
     WHEN (p.sub_id IS NOT NULL) THEN (SELECT produktgruppen_name FROM produktgruppe WHERE toplevel_id = p.toplevel_id AND sub_id = p.sub_id AND ISNULL(subsub_id))
     ELSE produktgruppen_name
   END) AS produktgruppe,
-  a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz
+  a.vk_preis, pfandartikel.vk_preis AS pfand, mwst.mwst_satz,
+  a.menge, a.einheit, a.herkunft
 FROM artikel AS a
 INNER JOIN lieferant USING (lieferant_id)
 INNER JOIN produktgruppe AS p USING (produktgruppen_id)
