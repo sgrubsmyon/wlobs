@@ -292,7 +292,7 @@
       let url = loading_url;
       prod.imgStyle = imgStyle(url);
       // get the image path via a web API call
-      axios.post('query-ep-image.php', {
+      axios.post("query-ep-image.php", {
         art_nr: art_nr
       })
         .then(response => {
@@ -303,7 +303,31 @@
             let img_filename = url.split('/').pop(); // get everything after the last occurrence of a slash
             img_filename = img_filename.substring(0, img_filename.lastIndexOf('.')); // remove the extension
             url = `https://www.el-puente.de/media/webp_image/catalog/product/cache/a7c6ae90704e4fffb85e1e61c39fd445/3/6/${img_filename}.webp`;
+            prod.imgStyle = imgStyle(url); // load the larger image
+          }
+        });
+      return url;
+    }
+
+    function loadProdImageFromGEPA(prod, art_nr, art_nr_alphanum, fallback_url, loading_url) {
+      let url = loading_url;
+      prod.imgStyle = imgStyle(url);
+      axios.get(`https://www.gepa-shop.de/searchautocomplete/ajax/suggest/?q=${art_nr}`)
+        .then(response => {
+          if (response.data && response.data.totalItems === 1) {
+            const gepa_prod_data = response.data.indexes[0].items[0];
+            url = gepa_prod_data.imageUrl;
             prod.imgStyle = imgStyle(url); // use this thumbnail image first as it's better than nothing
+            console.log(url);
+            // Try to load larger image now:
+            const base_url = url.split("?")[0];
+            const url_params = new URLSearchParams(url.split("?")[1]);
+            url_params.set("width", "700");
+            url_params.set("height", "700");
+            url_params.set("canvas", "700,700");
+            url = base_url + "?" + url_params.toString();
+            prod.imgStyle = imgStyle(url); // load the larger image
+            console.log(url);
           }
         });
       return url;
@@ -359,15 +383,8 @@
               prod.imgStyle = imgStyle(url);
               break;
             case 'GEPA':
-              if (typ == 'LM') {
-                url = 'https://www.gepa-wug.de/wug/bilder/inhalt/food/normal/' + art_nr_alphanum + '.jpg';
-                prod.imgStyle = imgStyle(url);
-                break;
-              } else if (typ == 'KHW') {
-                url = 'https://www.gepa-wug.de/wug/bilder/inhalt/klein/' + art_nr_alphanum + '.jpg';
-                prod.imgStyle = imgStyle(url);
-                break;
-              }
+              url = loadProdImageFromGEPA(prod, art_nr, art_nr_alphanum, fallback_url, loading_url);
+              break;
             case 'Globo':
               if (typ == 'KHW') {
                 url = 'https://www.gepa-wug.de/wug/bilder/inhalt/klein/' + art_nr_alphanum.toUpperCase() + '.jpg';
