@@ -288,7 +288,7 @@
       return "background-image: url('" + url + "');";
     };
 
-    function loadProdImageFromElPuente(prod, art_nr, art_nr_alphanum, fallback_url, loading_url) {
+    function loadProdImageFromElPuente(prod, art_nr, fallback_url, loading_url) {
       let url = loading_url;
       prod.imgStyle = imgStyle(url);
       // get the image path via a web API call
@@ -309,7 +309,7 @@
       return url;
     }
 
-    function loadProdImageFromGEPA(prod, art_nr, art_nr_alphanum, fallback_url, loading_url) {
+    function loadProdImageFromGEPA(prod, art_nr, fallback_url, loading_url) {
       let url = loading_url;
       prod.imgStyle = imgStyle(url);
       axios.get(`https://www.gepa-shop.de/searchautocomplete/ajax/suggest/?q=${art_nr}`)
@@ -318,7 +318,6 @@
             const gepa_prod_data = response.data.indexes[0].items[0];
             url = gepa_prod_data.imageUrl;
             prod.imgStyle = imgStyle(url); // use this thumbnail image first as it's better than nothing
-            console.log(url);
             // Try to load larger image now:
             const base_url = url.split("?")[0];
             const url_params = new URLSearchParams(url.split("?")[1]);
@@ -327,7 +326,25 @@
             url_params.set("canvas", "700,700");
             url = base_url + "?" + url_params.toString();
             prod.imgStyle = imgStyle(url); // load the larger image
-            console.log(url);
+          }
+        });
+      return url;
+    }
+
+    function loadProdImageFromGlobo(prod, art_nr, fallback_url, loading_url) {
+      let url = loading_url;
+      prod.imgStyle = imgStyle(url);
+      axios.post("query-globo-image.php", {
+        art_nr: art_nr
+      })
+        .then(response => {
+          if (response.data) {
+            const dom = document.createElement("template");
+            dom.innerHTML = response.data;
+            const img = dom.content.querySelector(".product--image-container .image--media > img"); // larger image
+            // const img = dom.content.querySelector("img"); // smaller image, then use "srcset" attribute
+            url = img.src;
+            prod.imgStyle = imgStyle(url);
           }
         });
       return url;
@@ -370,27 +387,23 @@
         },
         setImageStyle: function (typ, prod) {
           let art_nr = prod.artikel_nr.trim().toLowerCase();
-          let art_nr_alphanum = art_nr.replace(/[^\w]/g, ""); // only keep a-z and 0-9
           let fallback_url = 'KeinBild.png';
           let loading_url = 'BildLaden.png';
           let url = '';
           switch (prod.lieferant_name) {
             case 'El Puente':
-              url = loadProdImageFromElPuente(prod, art_nr, art_nr_alphanum, fallback_url, loading_url);
+              url = loadProdImageFromElPuente(prod, art_nr, fallback_url, loading_url);
               break;
             case 'WeltPartner':
               url = 'https://shop.weltpartner.de/images/stories/virtuemart/product/resized/' + art_nr + '_380x380.jpg';
               prod.imgStyle = imgStyle(url);
               break;
             case 'GEPA':
-              url = loadProdImageFromGEPA(prod, art_nr, art_nr_alphanum, fallback_url, loading_url);
+              url = loadProdImageFromGEPA(prod, art_nr, fallback_url, loading_url);
               break;
             case 'Globo':
-              if (typ == 'KHW') {
-                url = 'https://www.gepa-wug.de/wug/bilder/inhalt/klein/' + art_nr_alphanum.toUpperCase() + '.jpg';
-                prod.imgStyle = imgStyle(url);
-                break;
-              }
+              url = loadProdImageFromGlobo(prod, art_nr.toUpperCase(), fallback_url, loading_url);
+              break;
             default:
               url = fallback_url;
               prod.imgStyle = imgStyle(url);
