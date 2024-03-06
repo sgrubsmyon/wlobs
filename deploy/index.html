@@ -305,6 +305,10 @@
             url = `https://www.el-puente.de/media/webp_image/catalog/product/cache/a7c6ae90704e4fffb85e1e61c39fd445/3/6/${img_filename}.webp`;
             prod.imgStyle = imgStyle(url); // load the larger image
           }
+        })
+        .catch(error => {
+          url = fallback_url;
+          prod.imgStyle = imgStyle(url);
         });
       return url;
     }
@@ -327,6 +331,10 @@
             url = base_url + "?" + url_params.toString();
             prod.imgStyle = imgStyle(url); // load the larger image
           }
+        })
+        .catch(error => {
+          url = fallback_url;
+          prod.imgStyle = imgStyle(url);
         });
       return url;
     }
@@ -339,13 +347,28 @@
       })
         .then(response => {
           if (response.data) {
-            const dom = document.createElement("template");
-            dom.innerHTML = response.data;
-            const img = dom.content.querySelector(".product--image-container .image--media > img"); // larger image
-            // const img = dom.content.querySelector("img"); // smaller image, then use "srcset" attribute
-            url = img.src;
-            prod.imgStyle = imgStyle(url);
+            if (response.data.message) {
+              // there is an error message, it has not worked
+              url = fallback_url;
+              prod.imgStyle = imgStyle(url);    
+            } else {
+              const dom = document.createElement("template");
+              dom.innerHTML = response.data;
+              const img = dom.content.querySelector(".product--image-container .image--media > img"); // larger image
+              // const img = dom.content.querySelector("img"); // smaller image, then use "srcset" attribute
+              if (img) {
+                url = img.src;
+                prod.imgStyle = imgStyle(url);
+              } else {
+                url = fallback_url;
+                prod.imgStyle = imgStyle(url);
+              }
+            }
           }
+        })
+        .catch(error => {
+          url = fallback_url;
+          prod.imgStyle = imgStyle(url);
         });
       return url;
     }
@@ -408,16 +431,15 @@
               url = fallback_url;
               prod.imgStyle = imgStyle(url);
           }
-          if (prod.lieferant_name != 'El Puente') { // exclude the case where checks have already been made
-            // Check if image is available and if not: replace with fallback image
-            let img3 = new Image();
-            img3.onerror = function () {
-              console.log('Image ' + this.src + ' not there.');
-              url = fallback_url;
-              prod.imgStyle = imgStyle(url);
-            };
-            img3.src = url;
-          }
+          console.log("url: " + url);
+          // Check if image is available and if not: replace with fallback image
+          let img = new Image();
+          img.onerror = function () {
+            console.log('Image ' + this.src + ' not there.');
+            url = fallback_url;
+            prod.imgStyle = imgStyle(url);
+          };
+          img.src = url;
         },
         prodURL: function (typ, prod) {
           let url = '';
