@@ -322,6 +322,14 @@
             const gepa_prod_data = response.data.indexes[0].items[0];
             url = gepa_prod_data.imageUrl;
             prod.imgStyle = imgStyle(url); // use this thumbnail image first as it's better than nothing
+            
+            // set the product's detail website URL
+            const prodUrl = gepa_prod_data.url;
+            if (prodUrl) {
+              console.log("GEPA prodUrl: " + prodUrl, "for prod", prod);
+              prod.prodUrl = prodUrl;
+            }
+            
             // Try to load larger image now:
             const base_url = url.split("?")[0];
             const url_params = new URLSearchParams(url.split("?")[1]);
@@ -394,8 +402,8 @@
           this.productsInGroupPromise(item.productgroup, typ)
             .then(prods => {
               prods.forEach(prod => {
-                this.setProdURL(typ, prod)
-                this.setImageStyle(typ, prod)
+                this.setProdURL(typ, prod);
+                this.setImageStyle(typ, prod);
               });
               item.products = prods;
               item.id = "";
@@ -418,7 +426,8 @@
               url = loadProdImageFromElPuente(prod, art_nr, fallback_url, loading_url);
               break;
             case 'WeltPartner':
-              url = 'https://shop.weltpartner.de/images/stories/virtuemart/product/resized/' + art_nr + '_380x380.jpg';
+              // url = 'https://shop.weltpartner.de/images/stories/virtuemart/product/resized/' + art_nr + '_380x380.jpg';
+              url = 'https://shop.weltpartner.de/images/stories/virtuemart/product/' + art_nr + '.jpg'; // for full-sized image
               prod.imgStyle = imgStyle(url);
               break;
             case 'GEPA':
@@ -452,19 +461,21 @@
             case 'WeltPartner':
               art_nr = art_nr.replace(/ /g, '-');
               art_nr = art_nr.substring(0, 10).toUpperCase();
-              url = 'https://shop.weltpartner.de/suche?keyword=' + art_nr;
+              // url = 'https://shop.weltpartner.de/suche?keyword=' + art_nr; // old
+              url = 'https://shop.weltpartner.de/filter?q=' + art_nr;
               break;
             case 'GEPA':
               let art_nr_alphanum = art_nr.replace(/[^\w]/g, ''); // only keep a-z and 0-9
               if (typ == 'LM') {
-                url = 'https://www.gepa-wug.de/wug/media/produktpass/' + art_nr_alphanum + '.pdf';
+                url = `https://www.gepa-shop.de/media/downloadable/produktpaesse/${art_nr_alphanum}.pdf`
                 break;
               } else if (typ == 'KHW') {
-                url = 'https://www.gepa-wug.de/wug/htdocs/index.php?suchart=' + art_nr_alphanum + '&Submit=SUCHEN&serie=&partner=&sID=0101&search=11&produkt=promenu&themah=01&lan=de&land=&priceSearch=-';
+                url = `https://www.gepa-shop.de/catalogsearch/result/?q=${art_nr_alphanum}`;
                 break;
               }
             case 'Globo':
-              url = 'https://www.globo-fairtrade.com/search?sSearch=' + art_nr.toUpperCase();
+              // url = 'https://www.globo-fairtrade.com/search?sSearch=' + art_nr.toUpperCase(); // old, still working
+              url = "https://www.globo-fairtrade.com/search/index/sSearch/" + art_nr.toUpperCase(); // this seems to be normal now
               break;
             default:
               url = '';
