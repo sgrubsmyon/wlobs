@@ -324,10 +324,17 @@
             prod.imgStyle = imgStyle(url); // use this thumbnail image first as it's better than nothing
             
             // set the product's detail website URL
-            const prodUrl = gepa_prod_data.url;
-            if (prodUrl) {
-              console.log("GEPA prodUrl: " + prodUrl, "for prod", prod);
-              prod.prodUrl = prodUrl;
+            let prodURL = gepa_prod_data.url;
+            if (prodURL) {
+              prod.prodURL = prodURL;
+            } else {
+              let art_nr_alphanum = art_nr.replace(/[^\w]/g, ''); // only keep a-z and 0-9
+              if (typ == 'LM') {
+                prodURL = `https://www.gepa-shop.de/media/downloadable/produktpaesse/${art_nr_alphanum}.pdf`
+              } else if (typ == 'KHW') {
+                prodURL = `https://www.gepa-shop.de/catalogsearch/result/?q=${art_nr_alphanum}`;
+              }
+              prod.prodURL = prodURL;
             }
             
             // Try to load larger image now:
@@ -440,7 +447,6 @@
               url = fallback_url;
               prod.imgStyle = imgStyle(url);
           }
-          console.log("url: " + url);
           // Check if image is available and if not: replace with fallback image
           let img = new Image();
           img.onerror = function () {
@@ -450,7 +456,7 @@
           };
           img.src = url;
         },
-        prodURL: function (typ, prod) {
+        setProdURL: function (typ, prod) {
           let url = '';
           let art_nr = prod.artikel_nr.trim().toLowerCase();
           switch (prod.lieferant_name) {
@@ -464,15 +470,7 @@
               // url = 'https://shop.weltpartner.de/suche?keyword=' + art_nr; // old
               url = 'https://shop.weltpartner.de/filter?q=' + art_nr;
               break;
-            case 'GEPA':
-              let art_nr_alphanum = art_nr.replace(/[^\w]/g, ''); // only keep a-z and 0-9
-              if (typ == 'LM') {
-                url = `https://www.gepa-shop.de/media/downloadable/produktpaesse/${art_nr_alphanum}.pdf`
-                break;
-              } else if (typ == 'KHW') {
-                url = `https://www.gepa-shop.de/catalogsearch/result/?q=${art_nr_alphanum}`;
-                break;
-              }
+            // case 'GEPA' is done in setImageStyle(), because the JSON for image URL also contains product URL
             case 'Globo':
               // url = 'https://www.globo-fairtrade.com/search?sSearch=' + art_nr.toUpperCase(); // old, still working
               url = "https://www.globo-fairtrade.com/search/index/sSearch/" + art_nr.toUpperCase(); // this seems to be normal now
@@ -480,10 +478,9 @@
             default:
               url = '';
           }
-          return url;
-        },
-        setProdURL: function (typ, prod) {
-          prod.prodURL = this.prodURL(typ, prod);
+          if (url) {
+            prod.prodURL = url;
+          }
         },
         emojiPG: function (pg, typ) {
           switch (pg) {
